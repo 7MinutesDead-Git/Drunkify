@@ -23,10 +23,7 @@ function setupDrinkListeners() {
     const drinkButtons = document.querySelectorAll('.drink')
     drinkButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            // This way clicking on instructions doesn't hide/toggle the drink selection.
-            if (e.target.parentElement.classList.contains('drink')) {
-                toggleFocus(button)
-            }
+            toggleFocus(button)
         })
     })
 }
@@ -46,6 +43,8 @@ async function toggleFocus(drink) {
 function getFetch() {
     clearList()
     const choice = input.value
+    // TODO: Include ingredient searches.
+    const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?i=${choice}`
     const url = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
 
     fetch(url)
