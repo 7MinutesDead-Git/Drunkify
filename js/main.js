@@ -35,8 +35,6 @@ async function toggleFocus(drink) {
         behavior: 'smooth',
         block: 'center'
     })
-
-    console.log(drink)
 }
 
 // -------------------------------------------------------------
@@ -76,7 +74,6 @@ function renderError(code) {
 function renderDrinks(data) {
     if (data['drinks']) {
         for (const drink of data['drinks']) {
-            console.log(drink)
             cocktailList.appendChild(createDrinkBlock(drink))
         }
     } else {
