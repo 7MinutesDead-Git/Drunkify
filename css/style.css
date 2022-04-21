@@ -126,7 +126,13 @@ body {
   align-items: center;
   justify-content: space-between;
   z-index: 1;
+  opacity: 1;
+  transition: all 0.3s;
 }
+  .searchbar.hidden {
+    opacity: 0;
+    top: 0;
+  }
 input {
   transition: all 0.3s ease-in-out;
   border: none;

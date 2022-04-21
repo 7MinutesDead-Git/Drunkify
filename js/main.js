@@ -2,7 +2,8 @@ const button = document.querySelector("button")
 const input = document.querySelector("input")
 const errorSpan = document.querySelector(".error-text")
 const cocktailList = document.querySelector('.cocktails')
-
+const searchBar = document.querySelector('.searchbar')
+window.oldScroll = window.scrollY
 
 // -------------------------------------------------------------
 function wait(ms) {
@@ -16,6 +17,19 @@ function setupListeners() {
         if (e.key === 'Enter')
             getFetch()
     })
+    window.onscroll = (e) => {
+        toggleOpacityOnScroll(searchBar)
+    }
+}
+
+// -------------------------------------------------------------
+function toggleOpacityOnScroll(element) {
+    if (window.oldScroll > window.scrollY) {
+        element.classList.remove('hidden')
+    } else {
+        element.classList.add('hidden')
+    }
+    window.oldScroll = window.scrollY
 }
 
 // -------------------------------------------------------------
