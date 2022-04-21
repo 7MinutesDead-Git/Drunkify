@@ -119,7 +119,7 @@ function getDrinksByIngredient(idURL) {
 // -------------------------------------------------------------
 function renderError(code) {
     if (code === 404){
-        errorSpan.innerHTML = `Couldn't find a drink named ${input.value}.`
+        errorSpan.innerHTML = `Couldn't find a drink or ingredient named ${input.value} :(`
     }
     else {
         errorSpan.innerHTML = ''
