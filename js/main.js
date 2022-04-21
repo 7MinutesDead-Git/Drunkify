@@ -74,7 +74,7 @@ async function getFetch(choice = null) {
     getDrinksByIngredient(ingredientURL)
     getDrinksByName(drinkURL)
     // A stopgap to allow time for elements to render before attaching listeners and revealing.
-    await wait(500)
+    await wait(1000)
     setupDrinkListeners()
     revealDrinks()
 }
