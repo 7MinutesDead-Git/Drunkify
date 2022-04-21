@@ -166,7 +166,7 @@ body {
 }
 .drink > h3 {
   user-select: none;
-  font-size: 1.7rem;
+  font-size: 1.3rem;
   font-weight: 100;
   position: relative;
   top: -5rem;
@@ -175,7 +175,7 @@ body {
   color: white;
   text-shadow: 0 0.3rem 0.3rem #000;
 }
-.drink p{
+.drink p {
   display: none;
   opacity: 0;
   color: #6b6f78;
@@ -295,8 +295,16 @@ footer {
 /* TODO: Queries break on phone rotation.. Test out min-device-aspect-ratio alternatives with "or". */
 /* TODO: min-aspect-ratio doesn't take into consideration browser elements popping up, like search bar,
     mobile keyboard, etc. */
-/* Example: Wider than 1920x1080, approaching towards ultrawide. */
-@media screen and (min-device-aspect-ratio: 7/3) {
+
+/* Ultrawidening. */
+@media screen and (min-aspect-ratio: 25/9) {
+  .drink {
+    width: 15%;
+  }
+}
+
+/* Approaching towards ultrawide. */
+@media screen and (min-aspect-ratio: 7/3) {
   .cocktails {
     margin: 4rem 12rem 3rem -3rem;
   }
