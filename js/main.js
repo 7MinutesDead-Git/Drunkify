@@ -155,7 +155,6 @@ function formatInstructions(instructions) {
             result += `<p>${instruction}.</p>`
         }
     }
-
     return result
 }
 
