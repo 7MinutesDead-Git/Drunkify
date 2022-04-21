@@ -37,6 +37,8 @@ function setupDrinkListeners() {
     const drinkButtons = document.querySelectorAll('.drink')
     drinkButtons.forEach(button => {
         button.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A')
+                return
             toggleFocus(button)
         })
     })
@@ -153,7 +155,8 @@ function getIngredients(drink) {
         if (key.includes('Measure') && drinkKeyIsValid(drink, key) && measurementPairs[suffix].length > 0) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
-            ingredient.textContent = `${measurementPairs[suffix]}: ${measurement}`
+            const searchLink = `https://www.google.com/search?q=${measurementPairs[suffix]}`
+            ingredient.innerHTML = `<a href="${searchLink}" target="_blank">${measurementPairs[suffix]}</a>: ${measurement}`
             ingredient.classList.add('ingredient')
             ingredients.appendChild(ingredient)
         }
