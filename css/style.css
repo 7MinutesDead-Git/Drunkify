@@ -166,7 +166,7 @@ body {
 }
 .drink > h3 {
   user-select: none;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 100;
   position: relative;
   top: -5rem;
@@ -292,8 +292,11 @@ footer {
 /******************************************
 /* Queries.
 /*******************************************/
+/* TODO: Queries break on phone rotation.. Test out min-device-aspect-ratio alternatives with "or". */
+/* TODO: min-aspect-ratio doesn't take into consideration browser elements popping up, like search bar,
+    mobile keyboard, etc. */
 /* Example: Wider than 1920x1080, approaching towards ultrawide. */
-@media screen and (min-aspect-ratio: 15/8) {
+@media screen and (min-device-aspect-ratio: 15/8) {
   input {
     width: 30%;
   }
@@ -301,7 +304,7 @@ footer {
     width: 15%;
   }
   .drink h3 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   .drink {
     width: 17%;
@@ -324,22 +327,31 @@ footer {
       left: 9rem;
     }
 }
-/* Example: No wider than 1600x1080. */
-@media screen and (max-aspect-ratio: 40/27) {
+@media screen and (max-aspect-ratio: 2/1) {
   .drink {
     width: 20%;
   }
+  .drink > img {
+    width: 22rem;
+    height: 22rem;
+  }
+  .drink > h3 {
+    top: -5rem;
+    left: 3rem;
+    font-size: 1.5rem;
+  }
+  .drink:hover h3 {
+    left: 4rem;
+  }
 }
 
-/* Example: No wider than 1300x1080. */
-@media screen and (max-aspect-ratio: 65/54) {
+@media screen and (max-aspect-ratio: 5/3) {
   .drink {
     width: 25%;
   }
 }
 
-/* Example: No wider than 1100x1080. */
-@media screen and (max-aspect-ratio: 55/54) {
+@media screen and (max-aspect-ratio: 4/3) {
   input {
     width: 50%;
   }
@@ -348,6 +360,9 @@ footer {
   }
   .drink {
     width: 33%;
+  }
+  .drink h3 {
+    font-size: 1.8rem;
   }
   .drink.viewing img {
     width: 60vw;
@@ -378,16 +393,27 @@ footer {
     }
 }
 
-/* Example: No wider than 1000x1080. */
-@media screen and (max-aspect-ratio: 25/27) {
-  input {
-    width: 60%;
-  }
-  button {
-    width: 20%;
-  }
+@media screen and (max-aspect-ratio: 10/9) {
   .drink {
     width: 50%;
+  }
+  .drink > img {
+    width: 60vw;
+    height: 60vw;
+  }
+  .drink h3 {
+    font-size: 2.2rem;
+  }
+  .searchbar {
+    padding: 0 0 6rem 0;
+  }
+  input {
+    width: 70%;
+    height: 5rem;
+  }
+  button {
+    width: 30%;
+    height: 5rem;
   }
   .drink.viewing {
     width: 80%;
@@ -414,19 +440,7 @@ footer {
   }
 }
 
-/* 700 x 1080 */
-@media screen and (max-aspect-ratio: 63/92) {
-  .searchbar {
-    padding: 0 0 6rem 0;
-  }
-  input {
-    width: 70%;
-    height: 5rem;
-  }
-  button {
-    width: 30%;
-    height: 5rem;
-  }
+@media screen and (max-aspect-ratio: 8/9) {
   .drink {
     width: 100%;
   }
@@ -434,7 +448,7 @@ footer {
     width: 80%;
   }
   .drink.viewing > h3 {
-    font-size: 2rem;
+    font-size: 4rem;
   }
   .drink.viewing p {
     font-size: 1.8rem;
