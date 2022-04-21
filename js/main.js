@@ -38,10 +38,17 @@ async function toggleFocus(drink) {
 }
 
 // -------------------------------------------------------------
+function sanitizeInput(stringInput) {
+    let result = stringInput.trim()
+    result = result.endsWith('s') ? result.slice(0, -1) : result
+    return result
+}
+
+// -------------------------------------------------------------
 function getFetch() {
     clearList()
-    const choice = input.value
     // TODO: Include ingredient searches.
+    const choice = sanitizeInput(input.value)
     const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?i=${choice}`
     const url = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
 
