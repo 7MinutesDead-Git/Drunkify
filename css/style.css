@@ -70,7 +70,7 @@ body {
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
-  margin: 8rem 12rem 0 2rem;
+  margin: 8rem 12rem 3rem 2rem;
 }
 
 .drink {
@@ -172,6 +172,27 @@ button:hover {
   color: #ff0051;
   transform: translateY(-5px);
 }
+
+/******************************************
+/* Footer.
+/*******************************************/
+footer {
+  user-select: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 0.7rem;
+  font-weight: 100;
+  padding: 1rem;
+  color: #3c3c3c;
+  z-index: -1;
+}
+footer a {
+  color: #ff0051;
+  text-decoration: dotted underline;
+}
+
 
 /******************************************
 /* Transitions.
