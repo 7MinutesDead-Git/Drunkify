@@ -263,10 +263,16 @@ footer {
   margin: 0 0 1rem 0;
   animation: show 1s ease-in-out 0.5s forwards;
 }
-
-  .drink.viewing > img:hover {
-    transform: scale(1.1);
+  .drink.viewing:hover img {
+    transform: scale(1);
   }
+  .drink.viewing img:hover ~ h3 {
+    transform: translateX(-3rem);
+  }
+  .drink.viewing img:hover {
+    transform: translateX(3rem) scale(1.1);
+  }
+
 
 /******************************************
 /* Keyframes.
