@@ -133,10 +133,10 @@ function getIngredients(drink) {
     // TODO: If the API stops returning ingredients before measurements, we'll need to refactor this.
     for (const key in drink) {
         const suffix = key.charAt(key.length - 1)
-        if (key.includes('Ingredient') && drink[key] !== null) {
+        if (key.includes('Ingredient') && drinkKeyIsValid(drink, key)) {
             measurementPairs[suffix] = drink[key]
         }
-        if (key.includes('Measure') && drink[key] !== null && measurementPairs[suffix] !== null) {
+        if (key.includes('Measure') && drinkKeyIsValid(drink, key) && measurementPairs[suffix].length > 0) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
             ingredient.textContent = `${measurementPairs[suffix]}: ${measurement}`
@@ -145,6 +145,11 @@ function getIngredients(drink) {
         }
     }
     return ingredients
+}
+
+// -------------------------------------------------------------
+function drinkKeyIsValid(drink, key) {
+    return drink[key] !== null && drink[key].length > 0
 }
 
 // -------------------------------------------------------------
