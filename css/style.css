@@ -215,7 +215,7 @@ footer {
   transition: all 0.3s ease-in-out;
 }
   .drink:hover img {
-    transform: scale(1.1);
+    transform: scale(1.1) translateX(-2rem);
   }
   .drink:hover h3 {
     left: 3rem;
