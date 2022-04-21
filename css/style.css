@@ -296,7 +296,10 @@ footer {
 /* TODO: min-aspect-ratio doesn't take into consideration browser elements popping up, like search bar,
     mobile keyboard, etc. */
 /* Example: Wider than 1920x1080, approaching towards ultrawide. */
-@media screen and (min-device-aspect-ratio: 15/8) {
+@media screen and (min-device-aspect-ratio: 7/3) {
+  .cocktails {
+    margin: 4rem 12rem 3rem -3rem;
+  }
   input {
     width: 30%;
   }
@@ -328,6 +331,9 @@ footer {
     }
 }
 @media screen and (max-aspect-ratio: 2/1) {
+  .cocktails {
+    margin: 8rem 12rem 3rem 2rem;
+  }
   .drink {
     width: 20%;
   }
