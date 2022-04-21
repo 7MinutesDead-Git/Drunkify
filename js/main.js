@@ -23,6 +23,21 @@ function setupListeners() {
 }
 
 // -------------------------------------------------------------
+function setupDrinkListeners() {
+    const drinkButtons = document.querySelectorAll('.drink')
+    drinkButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                input.value = e.target.innerText
+                getFetch(e.target.innerText)
+            }
+            else
+                toggleFocus(button)
+        })
+    })
+}
+
+// -------------------------------------------------------------
 function toggleOpacityOnScroll(element) {
     if (window.oldScroll > window.scrollY) {
         element.classList.remove('hidden')
@@ -30,18 +45,6 @@ function toggleOpacityOnScroll(element) {
         element.classList.add('hidden')
     }
     window.oldScroll = window.scrollY
-}
-
-// -------------------------------------------------------------
-function setupDrinkListeners() {
-    const drinkButtons = document.querySelectorAll('.drink')
-    drinkButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A')
-                return
-            toggleFocus(button)
-        })
-    })
 }
 
 // -------------------------------------------------------------
@@ -61,22 +64,51 @@ function sanitizeInput(stringInput) {
 }
 
 // -------------------------------------------------------------
-function getFetch() {
+async function getFetch(choice = null) {
     clearList()
-    // TODO: Include ingredient searches.
-    const choice = sanitizeInput(input.value)
-    const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?i=${choice}`
-    const url = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
+    if (!choice)
+        choice = sanitizeInput(input.value)
+    const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
+    const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${choice}`
+    getDrinksByIngredient(ingredientURL)
+    getDrinksByName(drinkURL)
+    // A stopgap to allow time for elements to render before attaching listeners and revealing.
+    await wait(500)
+    setupDrinkListeners()
+    revealDrinks()
+}
 
+// -------------------------------------------------------------
+function getDrinksByName(url) {
     fetch(url)
         .then(res => {
             renderError(res.status)
             return res.json()
         })
         .then(data => {
-            renderDrinks(data)
-            setupDrinkListeners()
             console.log(data)
+            renderDrinks(data)
+        })
+        .catch(err => {
+            console.log(`Caught this error: ${err}`)
+        })
+}
+
+// -------------------------------------------------------------
+function getDrinksByIngredient(idURL) {
+    fetch(idURL)
+        .then(res => {
+            renderError(res.status)
+            return res.json()
+        })
+        .then(data => {
+            // Since ingredients don't return full drink details,
+            // we'll need to do a second fetch by the IDs we find.
+            for (const id of data['drinks']) {
+                const idNumber = id['idDrink']
+                const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idNumber}`
+                getDrinksByName(drinkURL)
+            }
         })
         .catch(err => {
             console.log(`Caught this error: ${err}`)
@@ -94,7 +126,7 @@ function renderError(code) {
 }
 
 // -------------------------------------------------------------
-function renderDrinks(data) {
+async function renderDrinks(data) {
     if (data['drinks']) {
         for (const drink of data['drinks']) {
             cocktailList.appendChild(createDrinkBlock(drink))
@@ -102,7 +134,6 @@ function renderDrinks(data) {
     } else {
         renderError(404)
     }
-    revealDrinks()
 }
 
 // -------------------------------------------------------------
@@ -128,8 +159,6 @@ function createDrinkBlock(data) {
     image.src = data['strDrinkThumb']
 
     instructions.innerHTML = formatInstructions(data['strInstructions'])
-
-
     const drinkInfo = [image, name, ingredients, instructions]
 
     for (const info of drinkInfo) {
@@ -155,8 +184,7 @@ function getIngredients(drink) {
         if (key.includes('Measure') && drinkKeyIsValid(drink, key) && measurementPairs[suffix].length > 0) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
-            const searchLink = `https://www.google.com/search?q=${measurementPairs[suffix]}`
-            ingredient.innerHTML = `<a href="${searchLink}" target="_blank">${measurementPairs[suffix]}</a>: ${measurement}`
+            ingredient.innerHTML = `<a>${measurementPairs[suffix]}</a>: ${measurement}`
             ingredient.classList.add('ingredient')
             ingredients.appendChild(ingredient)
         }
@@ -176,12 +204,13 @@ function clearList() {
 
 // -------------------------------------------------------------
 function formatInstructions(instructions) {
-    const array = instructions.split('.')
     let result = ''
-
-    for (const instruction of array) {
-        if (instruction.length > 0) {
-            result += `<p>${instruction}.</p>`
+    if (instructions) {
+        const array = instructions.split('.')
+        for (const instruction of array) {
+            if (instruction.length > 0) {
+                result += `<p>${instruction}.</p>`
+            }
         }
     }
     return result
