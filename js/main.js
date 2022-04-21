@@ -12,7 +12,9 @@ function wait(ms) {
 
 // -------------------------------------------------------------
 function setupListeners() {
-    button.addEventListener('click', getFetch)
+    button.addEventListener('click', () => {
+        getFetch()
+    })
     input.addEventListener('keypress', e => {
         if (e.key === 'Enter')
             getFetch()
@@ -59,7 +61,6 @@ async function toggleFocus(drink) {
 // -------------------------------------------------------------
 function sanitizeInput(stringInput) {
     let result = stringInput.trim()
-    result = result.endsWith('s') ? result.slice(0, -1) : result
     return result
 }
 
