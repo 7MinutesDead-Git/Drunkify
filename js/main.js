@@ -9,6 +9,7 @@ const searchBar = document.querySelector('.searchbar')
 let drinkButtons
 let drinksOnDisplay = {}
 
+// Add new property to window object for the sake of keeping track of previous scroll position.
 window.oldScroll = window.scrollY
 
 // -------------------------------------------------------------
@@ -220,7 +221,7 @@ function getIngredients(drink) {
     // To match the ingredients with their measurements, we can check the last character of the key name
     // since each measurement and ingredient name have a matching number suffix.
     // This works so long as there isn't more than 10 ingredients.
-    // TODO: If the API stops returning ingredients before measurements, we'll need to refactor this.
+    // TODO: If the API ever stops returning ingredients before measurements in the future, we'll need to refactor this.
     for (const key in drink) {
         const suffix = key.charAt(key.length - 1)
         if (key.includes('Ingredient') && drinkPropertyIsValid(drink, key)) {
