@@ -1,5 +1,6 @@
 // -------------------------------------------------------------
 // Variables.
+// -------------------------------------------------------------
 let button
 let input
 let cocktailList
@@ -11,8 +12,9 @@ let loadingIcon
 
 // -------------------------------------------------------------
 // Classes.
-
 // -------------------------------------------------------------
+
+
 // Handles errors received or implied by the API responses.
 // Renders the error message to the DOM when user needs to see it (say if no drinks were found).
 class APIErrors {
@@ -40,17 +42,21 @@ class APIErrors {
     }
 }
 
-class Drink {
 
+class Drink {
+    // ...
 }
 
+
 // -------------------------------------------------------------
+// Static functions.
+// -------------------------------------------------------------
+
 // Create a promise to resolve after a given delay in ms.
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// -------------------------------------------------------------
 // Setup user input event listeners.
 function setupListeners() {
     button.addEventListener('click', () => {
@@ -65,7 +71,6 @@ function setupListeners() {
     }
 }
 
-// -------------------------------------------------------------
 // Setup click event listeners for the drink buttons.
 function setupDrinkListeners() {
     drinkButtons = document.querySelectorAll('.drink')
@@ -82,7 +87,6 @@ function setupDrinkListeners() {
     })
 }
 
-// -------------------------------------------------------------
 // Show and hide an element when scrolling.
 // ie: Hide the search bar when scrolling down, but reveal it when trying to scroll back up to it.
 function toggleOpacityOnScroll(element) {
@@ -94,7 +98,6 @@ function toggleOpacityOnScroll(element) {
     window.oldScroll = window.scrollY
 }
 
-// -------------------------------------------------------------
 // Enter and exit focus on a drink button.
 // Also scrolls to the drink button's current location on focus and unfocus.
 async function toggleDrinkFocus(drink) {
@@ -105,7 +108,6 @@ async function toggleDrinkFocus(drink) {
     })
 }
 
-// -------------------------------------------------------------
 // Sanitize the user's search input for more consistent searches.
 function sanitizeInput(stringInput) {
     const trimmed = stringInput.trim()
@@ -116,7 +118,6 @@ function sanitizeInput(stringInput) {
     return alphaNumericOnly.toLowerCase()
 }
 
-// -------------------------------------------------------------
 // Get the drinks from the API and display them on screen.
 // Clears any previously existing drinks on screen.
 async function getDrinks(choice = null) {
@@ -139,7 +140,6 @@ async function getDrinks(choice = null) {
     errors.renderErrors()
 }
 
-// -------------------------------------------------------------
 // Retrieve drink data by name and render them on the screen.
 async function fetchDrinksByName(url) {
     try {
@@ -162,7 +162,6 @@ async function fetchDrinksByName(url) {
     }
 }
 
-// -------------------------------------------------------------
 // Retrieve drink data by ingredient, then search by ID with name function to get .
 async function fetchDrinksByIngredient(idURL) {
     try {
@@ -191,7 +190,6 @@ async function fetchDrinksByIngredient(idURL) {
     }
 }
 
-// -------------------------------------------------------------
 // Create each drink block and append them to the cocktail list to be displayed.
 function renderDrinks(data) {
     for (const drink of data['drinks']) {
@@ -202,12 +200,10 @@ function renderDrinks(data) {
     }
 }
 
-// -------------------------------------------------------------
 function toggleLoadingIcon() {
     loadingIcon.classList.toggle('visible')
 }
 
-// -------------------------------------------------------------
 // Gradually reveal each drink in the list.
 async function revealDrinks() {
     toggleLoadingIcon()
@@ -217,7 +213,6 @@ async function revealDrinks() {
     }
 }
 
-// -------------------------------------------------------------
 // Check if the given drink is already on the page.
 function drinkExists(drink) {
     const exists = drink['strDrink'] in drinksOnDisplay
@@ -226,7 +221,6 @@ function drinkExists(drink) {
     return exists
 }
 
-// -------------------------------------------------------------
 // Create the HTML structure for a drink block.
 // This inclludes the name, image, ingredients, and instructions.
 function createDrinkBlock(data) {
@@ -251,7 +245,6 @@ function createDrinkBlock(data) {
     return drink
 }
 
-// -------------------------------------------------------------
 // Create the HTML structure for the ingredients list.
 // Match ingredients with ingredient measure amounts, and remove empty entries.
 function getIngredients(drink) {
@@ -278,20 +271,17 @@ function getIngredients(drink) {
     return ingredients
 }
 
-// -------------------------------------------------------------
 // Check if given drink property key is not blank and not null.
 function drinkPropertyIsValid(drink, key) {
     return drink[key] !== null && drink[key].length > 0
 }
 
-// -------------------------------------------------------------
 // Reset the page to its empty state.
 function clearCocktailList() {
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
 }
 
-// -------------------------------------------------------------
 // Structure the instructions into paragraph elements per sentence.
 function formatInstructions(instructions) {
     let result = ''
@@ -307,6 +297,7 @@ function formatInstructions(instructions) {
 
 // -------------------------------------------------------------
 // Start here.
+// -------------------------------------------------------------
 window.onload = () => {
     // Add new property to window object for the sake of keeping track of previous scroll position.
     window.oldScroll = window.scrollY
