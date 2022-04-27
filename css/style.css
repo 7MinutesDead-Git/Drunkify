@@ -66,6 +66,12 @@ table {
   transition: all 0.3s;
   background-image: linear-gradient(to bottom, rgba(21,21,21,0.9) 0%, rgba(21,21,21,0) 100%);
 }
+.search-label {
+  display: block;
+  color: #9c9a9d;
+  margin: 1rem 3rem;
+  font-weight: 100;
+}
 .searchbar.hidden {
   opacity: 0;
   padding: 0 3rem 3rem 3rem;
@@ -135,11 +141,13 @@ body {
 }
 .error-text {
   position: absolute;
+  top: 50%;
+  left: 25%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   flex-direction: column;
-  color: #ff0000;
+  color: #ff0051;
   font-size: 1.5rem;
   text-align: center;
   transition: all 0.3s ease-in-out;

@@ -11,6 +11,7 @@ let loadingIcon
 
 // -------------------------------------------------------------
 // Classes.
+
 // -------------------------------------------------------------
 // Handles errors received or implied by the API responses.
 // Renders the error message to the DOM when user needs to see it (say if no drinks were found).
@@ -153,7 +154,7 @@ async function fetchDrinksByName(url) {
             await renderDrinks(data)
         }
         else {
-            errors.storeError(`No more drinks found by name "${input.value}"`)
+            errors.storeError(`Couldn't find "${input.value}" :(`)
         }
     }
     catch (err) {
@@ -182,7 +183,7 @@ async function fetchDrinksByIngredient(idURL) {
             }
         }
         else {
-            errors.storeError(`No more drinks found by ingredient "${input.value}"`)
+            errors.storeError(`Couldn't find "${input.value}" :(`)
         }
     }
     catch (err) {
