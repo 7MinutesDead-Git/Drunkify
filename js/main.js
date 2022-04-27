@@ -200,6 +200,7 @@ function renderDrinks(data) {
     }
 }
 
+// Toggle the loading icon visibility.
 function toggleLoadingIcon() {
     loadingIcon.classList.toggle('visible')
 }
