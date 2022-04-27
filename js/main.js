@@ -19,7 +19,8 @@ class APIErrors {
     errorSpan = document.querySelector(".error-text")
 
     storeError(error) {
-        this.errors[error] = true
+        if (error !== 200)
+            this.errors[error] = true
     }
     // We don't need to show errors to the user received by multiple API endpoints if the end result
     // is that we still found some drinks with some of the requests.
@@ -141,11 +142,13 @@ async function getDrinks(choice = null) {
 // Retrieve drink data by name and render them on the screen.
 async function fetchDrinksByName(url) {
     try {
-        console.log('Fetching drinks by name')
+        console.log('Fetching drinks by name...')
         const response = await fetch(url)
         errors.storeError(response.status)
 
         const data = await response.json()
+        console.log("Drink by name data:")
+        console.log(data)
         if (data['drinks']) {
             await renderDrinks(data)
         }
@@ -164,8 +167,10 @@ async function fetchDrinksByIngredient(idURL) {
     try {
         console.log('Fetching drinks by ingredient...')
         const response = await fetch(idURL)
+        console.log(`Ingredient response: ${response.status}`)
         errors.storeError(response.status)
         const data = await response.json()
+        console.log(data)
         if (data['drinks']) {
             for (const drink of data['drinks']) {
                 if (!(drinkExists(drink))) {
