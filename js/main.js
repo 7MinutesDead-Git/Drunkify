@@ -1,16 +1,46 @@
 // -------------------------------------------------------------
 // Variables.
-const button = document.querySelector("button")
-const input = document.querySelector("input")
-const errorSpan = document.querySelector(".error-text")
-const cocktailList = document.querySelector('.cocktails')
-const searchBar = document.querySelector('.searchbar')
-
+let button
+let input
+let cocktailList
+let searchBar
+let errors
 let drinkButtons
-let drinksOnDisplay = {}
+let drinksOnDisplay
+let loadingIcon
 
-// Add new property to window object for the sake of keeping track of previous scroll position.
-window.oldScroll = window.scrollY
+// -------------------------------------------------------------
+// Classes.
+// -------------------------------------------------------------
+// Handles errors received or implied by the API responses.
+// Renders the error message to the DOM when user needs to see it (say if no drinks were found).
+class APIErrors {
+    errors = {}
+    errorSpan = document.querySelector(".error-text")
+
+    storeError(error) {
+        this.errors[error] = true
+    }
+    // We don't need to show errors to the user received by multiple API endpoints if the end result
+    // is that we still found some drinks with some of the requests.
+    renderErrors() {
+        if (cocktailList.childElementCount === 0) {
+            for (const error in this.errors)
+                this.errorSpan.innerHTML += `<p>${error}</p>`
+        } else {
+            for (const error in this.errors)
+                console.log(error)
+        }
+    }
+    clearErrors() {
+        this.errors = []
+        this.errorSpan.innerHTML = ''
+    }
+}
+
+class Drink {
+
+}
 
 // -------------------------------------------------------------
 // Create a promise to resolve after a given delay in ms.
@@ -74,9 +104,14 @@ async function toggleDrinkFocus(drink) {
 }
 
 // -------------------------------------------------------------
-// Sanitize the user's search input by only allowing alphanumeric characters and spaces between words.
+// Sanitize the user's search input for more consistent searches.
 function sanitizeInput(stringInput) {
-    return stringInput.trim().replace(/[^a-z\d\s]/gi,'')
+    const trimmed = stringInput.trim()
+    // For example, good to remove accidental double spaces on input.
+    const excessSpaceRemoved = trimmed.replace(/\s+/g, ' ')
+    // Also keep dashes since drink and ingredient names can contain them.
+    const alphaNumericOnly = excessSpaceRemoved.replace(/[^a-z\d\s\-]/gi,'')
+    return alphaNumericOnly.toLowerCase()
 }
 
 // -------------------------------------------------------------
@@ -92,11 +127,14 @@ async function getDrinks(choice = null) {
     console.log(choice)
 
     // TODO Setup promises here and get rid of arbitrary wait time.
+    errors.clearErrors()
+    toggleLoadingIcon()
     await fetchDrinksByName(drinkURL)
     await fetchDrinksByIngredient(ingredientURL)
     await wait(1000)
     await setupDrinkListeners()
     await revealDrinks()
+    errors.renderErrors()
 }
 
 // -------------------------------------------------------------
@@ -105,11 +143,15 @@ async function fetchDrinksByName(url) {
     try {
         console.log('Fetching drinks by name')
         const response = await fetch(url)
-        await renderError(response.status)
+        errors.storeError(response.status)
 
         const data = await response.json()
-        console.log(data)
-        await renderDrinks(data)
+        if (data['drinks']) {
+            await renderDrinks(data)
+        }
+        else {
+            errors.storeError(`No more drinks found by name "${input.value}"`)
+        }
     }
     catch (err) {
         console.log(`Caught this error: ${err}`)
@@ -122,16 +164,20 @@ async function fetchDrinksByIngredient(idURL) {
     try {
         console.log('Fetching drinks by ingredient...')
         const response = await fetch(idURL)
-        await renderError(response.status)
-
+        errors.storeError(response.status)
         const data = await response.json()
-
-        for (const drink of data['drinks']) {
-            if (!(drinkExists(drink))) {
-                const idNumber = drink['idDrink']
-                const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idNumber}`
-                fetchDrinksByName(drinkURL)
+        if (data['drinks']) {
+            for (const drink of data['drinks']) {
+                if (!(drinkExists(drink))) {
+                    const idNumber = drink['idDrink']
+                    const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idNumber}`
+                    // If we await fetchDrinks here, each iteration of this loop will wait. May be useful in the future.
+                    fetchDrinksByName(drinkURL)
+                }
             }
+        }
+        else {
+            errors.storeError(`No more drinks found by ingredient "${input.value}"`)
         }
     }
     catch (err) {
@@ -140,37 +186,25 @@ async function fetchDrinksByIngredient(idURL) {
 }
 
 // -------------------------------------------------------------
-// Function for handling and rendering error codes.
-// For now, it's a catchall for 404 when the given drink doesn't exist.
-function renderError(code) {
-    if (code === 404){
-        errorSpan.innerHTML = `Couldn't find a drink or ingredient named ${input.value} :(`
-    }
-    else {
-        errorSpan.innerHTML = ''
+// Create each drink block and append them to the cocktail list to be displayed.
+function renderDrinks(data) {
+    for (const drink of data['drinks']) {
+        if (!(drinkExists(drink))) {
+            drinksOnDisplay[drink['strDrink']] = true
+            cocktailList.appendChild(createDrinkBlock(drink))
+        }
     }
 }
 
 // -------------------------------------------------------------
-// Create each drink block and append them to the cocktail list to be displayed.
-function renderDrinks(data) {
-    if (data['drinks']) {
-        for (const drink of data['drinks']) {
-            if (!(drinkExists(drink))) {
-                drinksOnDisplay[drink['strDrink']] = true
-                cocktailList.appendChild(createDrinkBlock(drink))
-            }
-        }
-    } else {
-        renderError(404)
-    }
-    console.log(`${Object.keys(drinksOnDisplay).length} drinks on display.`)
-    console.log(`${cocktailList.childElementCount} drinks in the list.`)
+function toggleLoadingIcon() {
+    loadingIcon.classList.toggle('visible')
 }
 
 // -------------------------------------------------------------
 // Gradually reveal each drink in the list.
 async function revealDrinks() {
+    toggleLoadingIcon()
     for (const drink of document.querySelectorAll('.drink')) {
         await wait(200)
         drink.style.opacity = '1'
@@ -264,5 +298,18 @@ function formatInstructions(instructions) {
     return result
 }
 
+
 // -------------------------------------------------------------
-window.onload = setupListeners
+// Start here.
+window.onload = () => {
+    // Add new property to window object for the sake of keeping track of previous scroll position.
+    window.oldScroll = window.scrollY
+    button = document.querySelector("button")
+    input = document.querySelector("input")
+    cocktailList = document.querySelector('.cocktails')
+    searchBar = document.querySelector('.searchbar')
+    loadingIcon = document.querySelector('.lds-ellipsis')
+    errors = new APIErrors()
+    drinksOnDisplay = {}
+    setupListeners()
+}
