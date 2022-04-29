@@ -1,0 +1,81 @@
+Add loading icon until drinks are being revealed.
+
+Create partial ingredient matchup array 
+(or object.. I could do that with common partial word as key)
+
+
+As part of user input (since ingredient api won't match partially):
+- Replace liquor with liqueur.
+
+- If "liqueur", add these requests:
+	- Midori melon liqueur
+	- godiva liqueur
+
+- If "juice" alone, add these requests:
+	- Cranberry juice
+	- Orange juice
+	- Lemon juice
+	- tomato juice
+	- pineapple juicecoffee
+	- lime juice
+
+- "peach":
+	- Peach schnapps
+
+- "egg":
+	- egg white
+	- egg yolk
+
+- "syrup":
+	- chocolate syrup
+	- sugar syrup
+	- gagliardo (uses "sirup of roses", "rose syrup")
+
+- "rum":
+	- dark rum
+	- light rum
+
+- "vermouth":
+	- dry vermouth
+
+- "cherry":
+	- maraschino cherry
+
+- "blackberry":
+	- blackberries
+
+- "vanilla":
+	- vanilla extract
+
+- "whipping cream":
+	- whipped cream
+
+- "ice cream", "ice-cream", "icecream":
+	- vanilla ice-cream
+
+- "chocolate":
+	- chocolate syrup
+	- chocolate sauce
+	- chocolate powder
+
+- "caramel":
+	- caramel sauce (still doesn't work..)
+
+- "licorice":
+	- licorice root
+
+- "curacao":
+	- blue curacao
+
+
+"Sirup of roses" should find "gagliardo"
+
+1.) suggestions = recent searches + random recommendations + partial ingredient match list.
+	suggestion(click => {
+		input = suggestion
+		fetch request
+	})
+	fetch {
+		store search term in suggestions.
+		store suggestions in localStorage.
+	}
