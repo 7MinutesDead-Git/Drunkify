@@ -43,11 +43,6 @@ class APIErrors {
 }
 
 
-class Drink {
-    // ...
-}
-
-
 // -------------------------------------------------------------
 // Static functions.
 // -------------------------------------------------------------
@@ -222,14 +217,57 @@ function drinkExists(drink) {
     return exists
 }
 
+// TODO: Convert to class here.
+class Drink {
+    constructor(apiData) {
+        this.data = apiData
+        this.instructionsData = apiData['strInstructions']
+        this.ingredientsElement = getIngredients(apiData)
+
+        this.drinkListItem = document.createElement('li')
+        this.nameHeader = document.createElement('h3')
+        this.instructionsDiv = document.createElement('div')
+        this.imageElement = document.createElement('img')
+
+        this.elements = [
+            this.drinkListItem,
+            this.nameHeader,
+            this.instructionsDiv,
+            this.imageElement,
+            this.ingredientsElement
+        ]
+    }
+    getFormattedInstructions() {
+        let result = ''
+        if (this.instructionsData) {
+            const array = this.instructionsData.split('.')
+            for (const instruction of array)
+                if (instruction.length > 0)
+                    result += `<p>${instruction}.</p>`
+        }
+        return result
+    }
+    addDrinkStyling() {
+        this.drinkListItem.classList.add('drink')
+    }
+    addInstructions() {
+        this.instructionsDiv.classList.add('instructions')
+        this.instructionsDiv.innerHTML = this.getFormattedInstructions()
+    }
+    appendDrinkElements() {
+        for (const element of this.elements)
+            this.drinkListItem.appendChild(element)
+    }
+}
 // Create the HTML structure for a drink block.
 // This inclludes the name, image, ingredients, and instructions.
 function createDrinkBlock(data) {
-    const drink = document.createElement('li')
-    const name = document.createElement('h3')
-    const instructions = document.createElement('div')
-    const image = document.createElement('img')
-    const ingredients = getIngredients(data)
+    // const drink = document.createElement('li')
+    // const name = document.createElement('h3')
+    // const instructions = document.createElement('div')
+    // const image = document.createElement('img')
+    // const ingredients = getIngredients(data)
+    const drink = new Drink(data)
 
     drink.classList.add('drink')
     instructions.classList.add('instructions')
