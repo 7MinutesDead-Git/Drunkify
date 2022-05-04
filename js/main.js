@@ -187,10 +187,13 @@ async function fetchDrinksByIngredient(idURL) {
 
 // Create each drink block and append them to the cocktail list to be displayed.
 function renderDrinks(data) {
-    for (const drink of data['drinks']) {
-        if (!(drinkExists(drink))) {
-            drinksOnDisplay[drink['strDrink']] = true
-            cocktailList.appendChild(createDrinkBlock(drink))
+    for (const drinkData of data['drinks']) {
+        if (!(drinkExists(drinkData))) {
+            drinksOnDisplay[drinkData['strDrink']] = true
+            const drink = new Drink(drinkData)
+            // TODO: Ensure drink class works here.
+            //  createDrinkBlock() was replaced here.
+            cocktailList.appendChild(drink.drinkListItem)
         }
     }
 }
@@ -217,7 +220,6 @@ function drinkExists(drink) {
     return exists
 }
 
-// TODO: Convert to class here.
 class Drink {
     constructor(apiData) {
         this.data = apiData
@@ -236,6 +238,7 @@ class Drink {
             this.imageElement,
             this.ingredientsElement
         ]
+        this.setupDrink()
     }
     getFormattedInstructions() {
         let result = ''
@@ -258,16 +261,29 @@ class Drink {
         for (const element of this.elements)
             this.drinkListItem.appendChild(element)
     }
+    setDrinkImageSource() {
+        this.imageElement.src = this.data['strDrinkThumb']
+    }
+    setDrinkName() {
+        this.nameHeader.innerHTML = this.data['strDrink']
+    }
+    setupDrink() {
+        this.addDrinkStyling()
+        this.addInstructions()
+        this.appendDrinkElements()
+        this.setDrinkImageSource()
+        this.setDrinkName()
+    }
 }
+// TODO: Remove once drink class confirmed working.
 // Create the HTML structure for a drink block.
 // This inclludes the name, image, ingredients, and instructions.
 function createDrinkBlock(data) {
-    // const drink = document.createElement('li')
-    // const name = document.createElement('h3')
-    // const instructions = document.createElement('div')
-    // const image = document.createElement('img')
-    // const ingredients = getIngredients(data)
-    const drink = new Drink(data)
+    const drink = document.createElement('li')
+    const name = document.createElement('h3')
+    const instructions = document.createElement('div')
+    const image = document.createElement('img')
+    const ingredients = getIngredients(data)
 
     drink.classList.add('drink')
     instructions.classList.add('instructions')
