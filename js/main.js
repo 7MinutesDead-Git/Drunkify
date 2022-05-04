@@ -16,6 +16,7 @@ let loadingIcon
 
 // TODO: Favorite system:
 //  - Add favorites button to navigation.
+//  - Maintain state between favorited or unfavorited.. Assign animation on drink view somehow?..
 //  - Add a favorite button to each drink.
 //  - Click favorite button to store drink object? id? name? in localStorage.
 //  - Store favorite drinks as.. array?
@@ -31,9 +32,9 @@ class Drink {
         this.nameHeader = document.createElement('h3')
         this.instructionsDiv = document.createElement('div')
         this.imageElement = document.createElement('img')
+        this.favorite = false
 
-        this.elements = [
-            this.drinkListItem,
+        this.childElements = [
             this.nameHeader,
             this.instructionsDiv,
             this.imageElement,
@@ -59,7 +60,7 @@ class Drink {
         this.instructionsDiv.innerHTML = this.getFormattedInstructions()
     }
     appendDrinkElements() {
-        for (const element of this.elements)
+        for (const element of this.childElements)
             this.drinkListItem.appendChild(element)
     }
     setDrinkImageSource() {
@@ -252,8 +253,7 @@ function renderDrinks(data) {
     for (const drinkData of data['drinks']) {
         if (!(drinkExists(drinkData))) {
             drinksOnDisplay[drinkData['strDrink']] = true
-            // TODO: Ensure drink class works here.
-            //  createDrinkBlock() was replaced here.
+            // Note: createDrinkBlock() was replaced by Drink class here.
             const drink = new Drink(drinkData)
             cocktailList.appendChild(drink.drinkListItem)
         }
@@ -282,30 +282,6 @@ function drinkExists(drink) {
     return exists
 }
 
-// TODO: Remove once drink class confirmed working.
-// Create the HTML structure for a drink block.
-// This inclludes the name, image, ingredients, and instructions.
-function createDrinkBlock(data) {
-    const drink = document.createElement('li')
-    const name = document.createElement('h3')
-    const instructions = document.createElement('div')
-    const image = document.createElement('img')
-    const ingredients = getIngredients(data)
-
-    drink.classList.add('drink')
-    instructions.classList.add('instructions')
-
-    name.textContent = data['strDrink']
-    image.src = data['strDrinkThumb']
-
-    instructions.innerHTML = formatInstructions(data['strInstructions'])
-    const drinkInfo = [image, name, ingredients, instructions]
-
-    for (const info of drinkInfo) {
-        drink.appendChild(info)
-    }
-    return drink
-}
 
 // Create the HTML structure for the ingredients list.
 // Match ingredients with ingredient measure amounts, and remove empty entries.
@@ -342,18 +318,6 @@ function drinkPropertyIsValid(drink, key) {
 function clearCocktailList() {
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
-}
-
-// Structure the instructions into paragraph elements per sentence.
-function formatInstructions(instructions) {
-    let result = ''
-    if (instructions) {
-        const array = instructions.split('.')
-        for (const instruction of array)
-            if (instruction.length > 0)
-                result += `<p>${instruction}.</p>`
-    }
-    return result
 }
 
 
