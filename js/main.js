@@ -14,6 +14,68 @@ let loadingIcon
 // Classes.
 // -------------------------------------------------------------
 
+// TODO: Favorite system:
+//  - Add favorites button to navigation.
+//  - Add a favorite button to each drink.
+//  - Click favorite button to store drink object? id? name? in localStorage.
+//  - Store favorite drinks as.. array?
+//  - Check favorite drinks array/list/etc when hitting display favorites button.
+
+class Drink {
+    constructor(apiData) {
+        this.data = apiData
+        this.instructionsData = apiData['strInstructions']
+        this.ingredientsElement = getIngredients(apiData)
+
+        this.drinkListItem = document.createElement('li')
+        this.nameHeader = document.createElement('h3')
+        this.instructionsDiv = document.createElement('div')
+        this.imageElement = document.createElement('img')
+
+        this.elements = [
+            this.drinkListItem,
+            this.nameHeader,
+            this.instructionsDiv,
+            this.imageElement,
+            this.ingredientsElement
+        ]
+        this.setupDrink()
+    }
+    getFormattedInstructions() {
+        let result = ''
+        if (this.instructionsData) {
+            const array = this.instructionsData.split('.')
+            for (const instruction of array)
+                if (instruction.length > 0)
+                    result += `<p>${instruction}.</p>`
+        }
+        return result
+    }
+    addDrinkStyling() {
+        this.drinkListItem.classList.add('drink')
+    }
+    addInstructions() {
+        this.instructionsDiv.classList.add('instructions')
+        this.instructionsDiv.innerHTML = this.getFormattedInstructions()
+    }
+    appendDrinkElements() {
+        for (const element of this.elements)
+            this.drinkListItem.appendChild(element)
+    }
+    setDrinkImageSource() {
+        this.imageElement.src = this.data['strDrinkThumb']
+    }
+    setDrinkName() {
+        this.nameHeader.innerHTML = this.data['strDrink']
+    }
+    setupDrink() {
+        this.addDrinkStyling()
+        this.addInstructions()
+        this.appendDrinkElements()
+        this.setDrinkImageSource()
+        this.setDrinkName()
+    }
+}
 
 // Handles errors received or implied by the API responses.
 // Renders the error message to the DOM when user needs to see it (say if no drinks were found).
@@ -190,9 +252,9 @@ function renderDrinks(data) {
     for (const drinkData of data['drinks']) {
         if (!(drinkExists(drinkData))) {
             drinksOnDisplay[drinkData['strDrink']] = true
-            const drink = new Drink(drinkData)
             // TODO: Ensure drink class works here.
             //  createDrinkBlock() was replaced here.
+            const drink = new Drink(drinkData)
             cocktailList.appendChild(drink.drinkListItem)
         }
     }
@@ -220,61 +282,6 @@ function drinkExists(drink) {
     return exists
 }
 
-class Drink {
-    constructor(apiData) {
-        this.data = apiData
-        this.instructionsData = apiData['strInstructions']
-        this.ingredientsElement = getIngredients(apiData)
-
-        this.drinkListItem = document.createElement('li')
-        this.nameHeader = document.createElement('h3')
-        this.instructionsDiv = document.createElement('div')
-        this.imageElement = document.createElement('img')
-
-        this.elements = [
-            this.drinkListItem,
-            this.nameHeader,
-            this.instructionsDiv,
-            this.imageElement,
-            this.ingredientsElement
-        ]
-        this.setupDrink()
-    }
-    getFormattedInstructions() {
-        let result = ''
-        if (this.instructionsData) {
-            const array = this.instructionsData.split('.')
-            for (const instruction of array)
-                if (instruction.length > 0)
-                    result += `<p>${instruction}.</p>`
-        }
-        return result
-    }
-    addDrinkStyling() {
-        this.drinkListItem.classList.add('drink')
-    }
-    addInstructions() {
-        this.instructionsDiv.classList.add('instructions')
-        this.instructionsDiv.innerHTML = this.getFormattedInstructions()
-    }
-    appendDrinkElements() {
-        for (const element of this.elements)
-            this.drinkListItem.appendChild(element)
-    }
-    setDrinkImageSource() {
-        this.imageElement.src = this.data['strDrinkThumb']
-    }
-    setDrinkName() {
-        this.nameHeader.innerHTML = this.data['strDrink']
-    }
-    setupDrink() {
-        this.addDrinkStyling()
-        this.addInstructions()
-        this.appendDrinkElements()
-        this.setDrinkImageSource()
-        this.setDrinkName()
-    }
-}
 // TODO: Remove once drink class confirmed working.
 // Create the HTML structure for a drink block.
 // This inclludes the name, image, ingredients, and instructions.
