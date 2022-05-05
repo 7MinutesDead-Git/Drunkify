@@ -1,4 +1,4 @@
-Add loading icon until drinks are being revealed.
+DONE d9e151a: Add loading icon until drinks are being revealed.
 
 Create partial ingredient matchup array 
 (or object.. I could do that with common partial word as key)
@@ -79,3 +79,11 @@ As part of user input (since ingredient api won't match partially):
 		store search term in suggestions.
 		store suggestions in localStorage.
 	}
+
+2.) Add favoriting system:
+//  - Add favorites button to navigation.
+//  - Maintain state between favorited or unfavorited.. Assign animation on drink view somehow?..
+//  - Add a favorite button to each drink.
+//  - Click favorite button to store drink object? id? name? in localStorage.
+//  - Store favorite drinks as.. array?
+//  - Check favorite drinks array/list/etc when hitting display favorites button.

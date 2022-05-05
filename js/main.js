@@ -15,12 +15,6 @@ let loadingIcon
 // -------------------------------------------------------------
 
 // TODO: Favorite system:
-//  - Add favorites button to navigation.
-//  - Maintain state between favorited or unfavorited.. Assign animation on drink view somehow?..
-//  - Add a favorite button to each drink.
-//  - Click favorite button to store drink object? id? name? in localStorage.
-//  - Store favorite drinks as.. array?
-//  - Check favorite drinks array/list/etc when hitting display favorites button.
 
 class Drink {
     constructor(apiData) {
