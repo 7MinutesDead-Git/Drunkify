@@ -14,8 +14,6 @@ let loadingIcon
 // Classes.
 // -------------------------------------------------------------
 
-// TODO: Favorite system:
-
 class Drink {
     constructor(apiData) {
         this.data = apiData
@@ -29,10 +27,10 @@ class Drink {
         this.favorite = false
 
         this.childElements = [
-            this.nameHeader,
-            this.instructionsDiv,
             this.imageElement,
-            this.ingredientsElement
+            this.nameHeader,
+            this.ingredientsElement,
+            this.instructionsDiv
         ]
         this.setupDrink()
     }
@@ -66,9 +64,12 @@ class Drink {
     setupDrink() {
         this.addDrinkStyling()
         this.addInstructions()
-        this.appendDrinkElements()
-        this.setDrinkImageSource()
         this.setDrinkName()
+        this.setDrinkImageSource()
+        this.appendDrinkElements()
+    }
+    getDrinkElement() {
+        return this.drinkListItem
     }
 }
 
@@ -249,7 +250,7 @@ function renderDrinks(data) {
             drinksOnDisplay[drinkData['strDrink']] = true
             // Note: createDrinkBlock() was replaced by Drink class here.
             const drink = new Drink(drinkData)
-            cocktailList.appendChild(drink.drinkListItem)
+            cocktailList.appendChild(drink.getDrinkElement())
         }
     }
 }
