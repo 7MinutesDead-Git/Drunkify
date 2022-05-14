@@ -11,6 +11,8 @@ let drinkButtons
 let drinksOnDisplay
 let loadingIcon
 
+let fetchedDrinks = []
+
 // -------------------------------------------------------------
 // Classes.
 // -------------------------------------------------------------
@@ -123,7 +125,7 @@ function setupListeners() {
         if (e.key === 'Enter')
             getDrinks()
     })
-    window.onscroll = (e) => {
+    window.onscroll = () => {
         toggleOpacityOnScroll(searchBar)
     }
 }
@@ -196,10 +198,11 @@ async function getDrinks(choice = null) {
     toggleLoadingIcon()
     const nameResponse = await fetchDrinksByName(drinkURL)
     const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
+    fetchedDrinks.push(nameResponse, ingredientResponse)
     // We should wait for all drink API fetches to complete successfully, otherwise
     // we run into issues where drinks are rendered before the API has responded,
     // resulting in empty spaces and missing drinks or information.
-    Promise.all([nameResponse, ingredientResponse])
+    Promise.allSettled(fetchedDrinks)
         .then(() => {
             setupDrinkListeners()
             revealDrinks()
@@ -249,7 +252,7 @@ async function fetchDrinksByIngredient(idURL) {
                     // If we were to await fetchDrinks here, each iteration of this loop will wait. May be useful in the future.
                     // We should return this fetch response here to be used in collecting all Promises for
                     // Promise.all() to wait for in getDrinks().
-                    return fetchDrinksByName(drinkURL)
+                    fetchedDrinks.push(fetchDrinksByName(drinkURL))
                 }
             }
         }
