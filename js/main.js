@@ -1,5 +1,6 @@
 // -------------------------------------------------------------
 // Variables.
+// TODO: Continue to encapsulate as much of these variables as possible.
 // -------------------------------------------------------------
 let button
 let input
@@ -24,6 +25,7 @@ class Drink {
         this.nameHeader = document.createElement('h3')
         this.instructionsDiv = document.createElement('div')
         this.imageElement = document.createElement('img')
+        this.favoriteIcon = document.createElement('i')
         this.favorite = false
 
         this.childElements = [
@@ -83,9 +85,9 @@ class APIErrors {
         if (error !== 200)
             this.errors[error] = true
     }
-    // We don't need to show errors to the user received by multiple API endpoints if the end result
-    // is that we still found some drinks with some of the requests.
     renderErrors() {
+        // We don't need to show errors to the user received by multiple API endpoints if the end result
+        // is that we still found some drinks with some of the requests.
         if (cocktailList.childElementCount === 0) {
             for (const error in this.errors)
                 this.errorSpan.innerHTML += `<p>${error}</p>`
@@ -103,9 +105,11 @@ class APIErrors {
 
 // -------------------------------------------------------------
 // Static functions.
+// TODO: Encapsulate more of this behavior in new classes.
 // -------------------------------------------------------------
 
 // Create a promise to resolve after a given delay in ms.
+// We can use this for animation-like effects or arbitrary delays.
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -145,7 +149,13 @@ function setupDrinkListeners() {
 function toggleOpacityOnScroll(element) {
     if (window.oldScroll > window.scrollY) {
         element.classList.remove('hidden')
-    } else {
+    }
+    // Fixes the search bar hiding when result window length does not require scrolling.
+    // Example: When focused drink details are longer than a full page height,
+    // but the search results are not, so the search bar is lost when unfocusing from drink.
+    // TODO: This makes the return transition a bit jittery. It would be better to base this on
+    //  if there is a scroll bar present when drink is not focused.
+    else if (window.scrollY !== 0) {
         element.classList.add('hidden')
     }
     window.oldScroll = window.scrollY
@@ -164,10 +174,11 @@ async function toggleDrinkFocus(drink) {
 // Sanitize the user's search input for more consistent searches.
 function sanitizeInput(stringInput) {
     const trimmed = stringInput.trim()
-    // For example, good to remove accidental double spaces on input.
+    // Good to remove accidental excess spaces on input and replace with single intended space.
     const excessSpaceRemoved = trimmed.replace(/\s+/g, ' ')
-    // Also keep dashes since drink and ingredient names can contain them.
+    // Keep dashes since drink and ingredient names can contain them.
     const alphaNumericOnly = excessSpaceRemoved.replace(/[^a-z\d\s\-]/gi,'')
+    // Case insensitivity means we can remain agnostic to the whims of the API we're fetching.
     return alphaNumericOnly.toLowerCase()
 }
 
@@ -180,20 +191,24 @@ async function getDrinks(choice = null) {
 
     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
     const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${choice}`
-    console.log(choice)
 
-    // TODO Setup promises here and get rid of arbitrary wait time.
     errors.clearErrors()
     toggleLoadingIcon()
-    await fetchDrinksByName(drinkURL)
-    await fetchDrinksByIngredient(ingredientURL)
-    await wait(1000)
-    await setupDrinkListeners()
-    await revealDrinks()
-    errors.renderErrors()
+    const nameResponse = await fetchDrinksByName(drinkURL)
+    const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
+    // We should wait for all drink API fetches to complete successfully, otherwise
+    // we run into issues where drinks are rendered before the API has responded,
+    // resulting in empty spaces and missing drinks or information.
+    Promise.all([nameResponse, ingredientResponse])
+        .then(() => {
+            setupDrinkListeners()
+            revealDrinks()
+            errors.renderErrors()
+    })
 }
 
 // Retrieve drink data by name and render them on the screen.
+// Returns the response object for managing Promises.
 async function fetchDrinksByName(url) {
     try {
         console.log('Fetching drinks by name...')
@@ -209,13 +224,15 @@ async function fetchDrinksByName(url) {
         else {
             errors.storeError(`Couldn't find "${input.value}" :(`)
         }
+        return response
     }
     catch (err) {
         console.log(`Caught this error: ${err}`)
     }
 }
 
-// Retrieve drink data by ingredient, then search by ID with name function to get .
+// Retrieve drink data by ingredient, then search by ID with name function to get full drink data.
+// Returns the response object for managing Promises.
 async function fetchDrinksByIngredient(idURL) {
     try {
         console.log('Fetching drinks by ingredient...')
@@ -229,14 +246,17 @@ async function fetchDrinksByIngredient(idURL) {
                 if (!(drinkExists(drink))) {
                     const idNumber = drink['idDrink']
                     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idNumber}`
-                    // If we await fetchDrinks here, each iteration of this loop will wait. May be useful in the future.
-                    fetchDrinksByName(drinkURL)
+                    // If we were to await fetchDrinks here, each iteration of this loop will wait. May be useful in the future.
+                    // We should return this fetch response here to be used in collecting all Promises for
+                    // Promise.all() to wait for in getDrinks().
+                    return fetchDrinksByName(drinkURL)
                 }
             }
         }
         else {
             errors.storeError(`Couldn't find "${input.value}" :(`)
         }
+        return response
     }
     catch (err) {
         console.log(`Caught this error: ${err}`)
