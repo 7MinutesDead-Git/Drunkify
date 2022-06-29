@@ -2,7 +2,8 @@
 // Variables.
 // TODO: Continue to encapsulate as much of these variables as possible.
 // -------------------------------------------------------------
-let button
+let searchButton
+let clearButton
 let input
 let cocktailList
 let searchBar
@@ -27,12 +28,14 @@ class Drink {
         this.nameHeader = document.createElement('h3')
         this.instructionsDiv = document.createElement('div')
         this.imageElement = document.createElement('img')
-        this.favoriteIcon = document.createElement('i')
-        this.favorite = false
+        this.heart = this.setupHeart()
+        // TODO: Check localStorage if drink matches a favorite.
+        this.favorited = false
 
         this.childElements = [
             this.imageElement,
             this.nameHeader,
+            // this.heart,
             this.ingredientsElement,
             this.instructionsDiv
         ]
@@ -59,21 +62,39 @@ class Drink {
         for (const element of this.childElements)
             this.drinkListItem.appendChild(element)
     }
-    setDrinkImageSource() {
+    setupDrinkImage() {
+        this.imageElement.classList.add('hidden')
+
+        // To prevent seeing the image loading in before it's fully loaded.
+        this.imageElement.onload = () => {
+            this.imageElement.classList.remove('hidden')
+            this.nameHeader.classList.remove('loading')
+            this.nameHeader.innerHTML = this.data['strDrink']
+        }
         this.imageElement.src = this.data['strDrinkThumb']
     }
     setDrinkName() {
-        this.nameHeader.innerHTML = this.data['strDrink']
+        this.nameHeader.innerHTML = "Loading..."
+        this.nameHeader.classList.add('loading')
     }
     setupDrink() {
         this.addDrinkStyling()
         this.addInstructions()
         this.setDrinkName()
-        this.setDrinkImageSource()
+        this.setupDrinkImage()
         this.appendDrinkElements()
     }
     getDrinkElement() {
         return this.drinkListItem
+    }
+    setupHeart() {
+        // TODO: Construct heart favorite icon
+        const element = document.createElement('div')
+        element.innerHTML = svgHeart
+        // element.type = 'checkbox'
+        // if (this.favorited)
+        //     element.checked = true
+        return element
     }
 }
 
@@ -118,7 +139,11 @@ function wait(ms) {
 
 // Setup user input event listeners.
 function setupListeners() {
-    button.addEventListener('click', () => {
+    clearButton.addEventListener('click', () => {
+        clearCocktailList()
+        errors.clearErrors()
+    })
+    searchButton.addEventListener('click', () => {
         getDrinks()
     })
     input.addEventListener('keypress', e => {
@@ -324,6 +349,13 @@ function getIngredients(drink) {
             ingredients.appendChild(ingredient)
         }
     }
+    // If there are no ingredients, add a button for submitting new ingredients.
+    if (ingredients.children.length === 0) {
+        ingredients.innerHTML = '<li>No ingredients listed. Submit some!</li>'
+        const submitIngredientButton = document.createElement('button')
+        submitIngredientButton.innerHTML = 'Submit ingredient'
+        ingredients.appendChild(submitIngredientButton)
+    }
     return ingredients
 }
 
@@ -345,7 +377,8 @@ function clearCocktailList() {
 window.onload = () => {
     // Add new property to window object for the sake of keeping track of previous scroll position.
     window.oldScroll = window.scrollY
-    button = document.querySelector("button")
+    searchButton = document.querySelector("#getCocktails")
+    clearButton = document.querySelector("#clearCocktails")
     input = document.querySelector("input")
     cocktailList = document.querySelector('.cocktails')
     searchBar = document.querySelector('.searchbar')

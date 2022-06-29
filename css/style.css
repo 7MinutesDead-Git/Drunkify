@@ -48,6 +48,17 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+/******************************************
+/* Helpers
+/*******************************************/
+.loading {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
 
 /******************************************
 /* Search bar.
@@ -121,6 +132,14 @@ button:hover {
   color: #ff0051;
   transform: translateY(-5px);
 }
+#clearCocktails {
+  background: #181818;
+  color: #7b8796;
+}
+#clearCocktails:hover {
+    background: #181818;
+    color: #ff0051;
+}
 
 
 /******************************************
@@ -177,6 +196,11 @@ body {
   height: 20rem;
   border-radius: 50%;
   box-shadow: 0 0 5rem 0.5rem rgba(0,0,0,0.7);
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+.drink > img.hidden {
+  opacity: 0;
 }
 .drink > h3 {
   user-select: none;
@@ -324,10 +348,10 @@ footer {
     transform: scale(1);
   }
   .drink.viewing img:hover ~ h3 {
-    transform: translateX(-3rem);
+    transform: translateX(-0.4rem);
   }
   .drink.viewing img:hover {
-    transform: translateX(3rem) scale(1.1);
+    transform: scale(1.02);
   }
 
 
@@ -480,10 +504,10 @@ footer {
     color: floralwhite;
   }
 
-    .drink.viewing > img:hover {
-      transform: scale(1.1);
-      filter: brightness(1);
-    }
+    /*.drink.viewing > img:hover {*/
+    /*  transform: scale(1.1);*/
+    /*  filter: brightness(1);*/
+    /*}*/
 }
 
 @media screen and (max-aspect-ratio: 10/9) {
@@ -559,6 +583,6 @@ footer {
     height: 90vw;
   }
     .drink:hover img {
-      transform: scale(1.1) translateY(-1rem);
+      transform: scale(1.04) translateY(-1rem);
     }
 }
