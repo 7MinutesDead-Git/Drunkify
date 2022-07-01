@@ -1,7 +1,14 @@
-DONE d9e151a: Add loading icon until drinks are being revealed.
-
 Create partial ingredient matchup array 
 (or object.. I could do that with common partial word as key)
+
+////////////////////////////////////////////////////////////////////////////////////
+Add means of sharing drinks.
+- Since it's all frontend right now:
+	- Get ID from drink.
+	- Create query URL to share. Add to clipboard.
+	- If requested URL has query in it, parse query URL into specific drink fetch and display:
+		- (window.location.href) contains current URL. Grab from here!
+////////////////////////////////////////////////////////////////////////////////////
 
 
 As part of user input (since ingredient api won't match partially):
