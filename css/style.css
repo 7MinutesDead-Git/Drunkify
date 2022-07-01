@@ -63,19 +63,25 @@ table {
 /******************************************
 /* Search bar.
 /*******************************************/
-.searchbar {
+.search-section {
   position: fixed;
   display: flex;
+  flex-direction: column;
   top: 0;
   left: 0;
   width: 100%;
   padding: 3rem 0 0 3rem;
-  align-items: center;
-  justify-content: flex-start;
+  transition: all 0.3s;
   z-index: 1;
   opacity: 1;
-  transition: all 0.3s;
   background-image: linear-gradient(to bottom, rgba(21,21,21,0.9) 0%, rgba(21,21,21,0) 100%);
+}
+.searchbar {
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  opacity: 1;
+  transition: all 0.3s;
 }
 .search-label {
   display: block;
@@ -83,7 +89,7 @@ table {
   margin: 1rem 3rem;
   font-weight: 100;
 }
-.searchbar.hidden {
+.search-section.hidden {
   opacity: 0;
   padding: 0 3rem 3rem 3rem;
 }
@@ -139,6 +145,36 @@ button:hover {
 #clearCocktails:hover {
     background: #181818;
     color: #ff0051;
+}
+.suggestions {
+  user-select: none;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  color: #ff0051;
+  font-style: italic;
+  font-weight: lighter;
+  padding: 1rem 0;
+  text-decoration: underline dotted;
+  text-underline-position: under;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+  transform: translateY(0);
+}
+.suggestions.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+/* TODO: Make media queries for suggestions box. */
+.suggestions > li {
+  margin: 0 1rem 0 0;
+  transition: all 0.3s ease-in-out;
+  text-shadow: 0 0 0.1rem #181818;
+}
+.suggestions > li:hover {
+  color: beige;
+  text-decoration-color: beige;
+  transform: translateY(-5px);
 }
 
 

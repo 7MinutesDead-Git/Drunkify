@@ -4,13 +4,14 @@
 // -------------------------------------------------------------
 let searchButton
 let clearButton
-let input
+let searchInput
 let cocktailList
-let searchBar
+let searchSection
 let errors
 let drinkButtons
 let drinksOnDisplay
 let loadingIcon
+let suggestions
 
 let fetchedDrinks = []
 
@@ -140,18 +141,27 @@ function wait(ms) {
 // Setup user input event listeners.
 function setupListeners() {
     clearButton.addEventListener('click', () => {
-        clearCocktailList()
+        clearScreen()
+        clearInput()
         errors.clearErrors()
     })
     searchButton.addEventListener('click', () => {
         getDrinks()
     })
-    input.addEventListener('keypress', e => {
+    searchInput.addEventListener('keypress', e => {
         if (e.key === 'Enter')
             getDrinks()
     })
+    searchInput.addEventListener('focus', () => {
+        console.log('focus')
+        suggestions.classList.remove('hidden')
+    })
+    searchInput.addEventListener('focusout', () => {
+        console.log('focusout')
+        suggestions.classList.add('hidden')
+    })
     window.onscroll = () => {
-        toggleOpacityOnScroll(searchBar)
+        toggleOpacityOnScroll(searchSection)
     }
 }
 
@@ -162,8 +172,8 @@ function setupDrinkListeners() {
         button.addEventListener('click', (e) => {
             // Search by ingredient just by clicking on the ingredient link.
             if (e.target.tagName === 'A') {
-                input.value = e.target.innerText
-                getDrinks(input.value)
+                searchInput.value = e.target.innerText
+                getDrinks(searchInput.value)
             }
             else
                 toggleDrinkFocus(button)
@@ -212,16 +222,19 @@ function sanitizeInput(stringInput) {
 // Get the drinks from the API and display them on screen.
 // Clears any previously existing drinks on screen.
 async function getDrinks(choice = null) {
-    clearCocktailList()
+    clearScreen()
     if (!choice)
-        choice = sanitizeInput(input.value)
+        choice = sanitizeInput(searchInput.value)
+
+    // Store choice in localStorage to display as history.
+    addSearchToLocalHistory(choice)
 
     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
     const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${choice}`
 
     errors.clearErrors()
     toggleLoadingIcon()
-    const nameResponse = await fetchDrinksByName(drinkURL)
+    const nameResponse = fetchDrinksByName(drinkURL)
     const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
     fetchedDrinks.push(nameResponse, ingredientResponse)
     // We should wait for all drink API fetches to complete successfully, otherwise
@@ -250,7 +263,7 @@ async function fetchDrinksByName(url) {
             await renderDrinks(data)
         }
         else {
-            errors.storeError(`Couldn't find "${input.value}" :(`)
+            errors.storeError(`Couldn't find "${searchInput.value}" :(`)
         }
         return response
     }
@@ -282,7 +295,7 @@ async function fetchDrinksByIngredient(idURL) {
             }
         }
         else {
-            errors.storeError(`Couldn't find "${input.value}" :(`)
+            errors.storeError(`Couldn't find "${searchInput.value}" :(`)
         }
         return response
     }
@@ -365,9 +378,45 @@ function drinkPropertyIsValid(drink, key) {
 }
 
 // Reset the page to its empty state.
-function clearCocktailList() {
+function clearScreen() {
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
+}
+
+// Add search term to local history.
+function addSearchToLocalHistory(search) {
+    search = sanitizeInput(search)
+    const history = JSON.parse(localStorage.getItem('searchHistory')) || []
+    if (!(history.includes(search))) {
+        history.push(search)
+
+        if (history.length > 6) {
+            history.shift()
+        }
+        localStorage.setItem('searchHistory', JSON.stringify(history))
+    }
+    updateSearchHistoryDisplay(history)
+}
+
+function updateSearchHistoryDisplay(historyArray) {
+    suggestions.innerHTML = ''
+    for (const searchTerm of historyArray.reverse()) {
+        const historyItem = document.createElement('li')
+        historyItem.addEventListener('click', () => {
+            searchInput.value = searchTerm
+            getDrinks(searchInput.value)
+        })
+        historyItem.innerHTML = `> ${searchTerm}`
+        suggestions.appendChild(historyItem)
+    }
+}
+
+function getSearchHistory() {
+    return JSON.parse(localStorage.getItem('searchHistory')) || []
+}
+
+function clearInput() {
+    searchInput.value = ''
 }
 
 
@@ -379,11 +428,13 @@ window.onload = () => {
     window.oldScroll = window.scrollY
     searchButton = document.querySelector("#getCocktails")
     clearButton = document.querySelector("#clearCocktails")
-    input = document.querySelector("input")
+    searchInput = document.querySelector("input")
+    suggestions = document.querySelector(".suggestions")
     cocktailList = document.querySelector('.cocktails')
-    searchBar = document.querySelector('.searchbar')
+    searchSection = document.querySelector('.search-section')
     loadingIcon = document.querySelector('.lds-ellipsis')
     errors = new APIErrors()
     drinksOnDisplay = {}
     setupListeners()
+    updateSearchHistoryDisplay(getSearchHistory())
 }

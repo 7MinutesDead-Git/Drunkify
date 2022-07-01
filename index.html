@@ -14,15 +14,15 @@
 
 	<body>
 		<header>
-			<section>
-				<ul class="suggestions"></ul>
-			</section>
-			<section class="searchbar">
-				<input type="text" id="search" placeholder="margarita">
-				<button id="getCocktails">find drink</button>
-				<button id="clearCocktails">clear</button>
-			</section>
 			<label class="search-label" for="search">Search for drink by name or ingredient.</label>
+			<section class="search-section">
+				<section class="searchbar">
+					<input type="text" id="search" placeholder="margarita" autocomplete="off">
+					<button id="getCocktails">find drink</button>
+					<button id="clearCocktails">clear</button>
+				</section>
+				<ul class="suggestions hidden"></ul>
+			</section>
 			<section class="error-text"></section>
 		</header>
 
