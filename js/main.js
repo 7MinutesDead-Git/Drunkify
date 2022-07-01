@@ -14,6 +14,9 @@ let loadingIcon
 let suggestions
 
 let fetchedDrinks = []
+// TODO: Fade older search history out as it gets longer.
+// Base fade on screen width (so the edge is completely faded).
+const SEARCH_HISTORY_LIMIT = 7
 
 // -------------------------------------------------------------
 // Classes.
@@ -390,7 +393,7 @@ function addSearchToLocalHistory(search) {
     if (!(history.includes(search))) {
         history.push(search)
 
-        if (history.length > 6) {
+        if (history.length > SEARCH_HISTORY_LIMIT) {
             history.shift()
         }
         localStorage.setItem('searchHistory', JSON.stringify(history))
