@@ -431,10 +431,6 @@ footer {
 /******************************************
 /* Queries.
 /*******************************************/
-/* TODO: Queries break on phone rotation.. Test out min-device-aspect-ratio alternatives with "or". */
-/* TODO: min-aspect-ratio doesn't take into consideration browser elements popping up, like search bar,
-    mobile keyboard, etc. */
-
 /* Ultrawidening. */
 @media screen and (min-aspect-ratio: 25/9) {
   .drink {
@@ -477,6 +473,8 @@ footer {
       left: 9rem;
     }
 }
+
+/* 5 drinks wide */
 @media screen and (max-aspect-ratio: 2/1) {
   .cocktails {
     margin: 8rem 12rem 3rem 2rem;
@@ -498,18 +496,36 @@ footer {
   }
 }
 
+/* 4 drinks wide */
 @media screen and (max-aspect-ratio: 5/3) {
   .drink {
     width: 25%;
   }
 }
 
+/* 3 drinks wide */
 @media screen and (max-aspect-ratio: 4/3) {
+  .cocktails {
+    margin: 12rem 10rem 3rem 1rem;
+  }
+  .search-section {
+    padding: 4rem 0 0 0;
+  }
+  .suggestions {
+    font-size: 1.5rem;
+  }
+  input, button {
+    font-size: 3rem;
+    height: 5rem;
+  }
   input {
-    width: 50%;
+    width: 60%
   }
   button {
-    width: 15%;
+    width: 20%;
+  }
+  label[for="search"] {
+    display: none;
   }
   .drink {
     width: 33%;
@@ -539,14 +555,17 @@ footer {
     font-size: 1.1rem;
     color: floralwhite;
   }
-
-    /*.drink.viewing > img:hover {*/
-    /*  transform: scale(1.1);*/
-    /*  filter: brightness(1);*/
-    /*}*/
 }
 
+/* 2 drinks wide */
 @media screen and (max-aspect-ratio: 10/9) {
+  .search-section {
+    padding: 2rem 0 0 0;
+  }
+  .suggestions {
+    transform: translateY(-5rem);
+    font-size: 3rem;
+  }
   .drink {
     width: 50%;
   }
@@ -555,18 +574,27 @@ footer {
     height: 60vw;
   }
   .drink h3 {
-    font-size: 2.2rem;
+    font-size: 4rem;
   }
   .searchbar {
+    margin: 2rem 0 0 0;
     padding: 0 0 6rem 0;
+  }
+  label[for="search"] {
+    font-size: 2rem;
   }
   input {
     width: 70%;
     height: 5rem;
+    font-size: 4rem;
   }
   button {
     width: 30%;
     height: 5rem;
+    font-size: 3rem;
+  }
+  button#clearCocktails {
+    display:none;
   }
   .drink.viewing {
     width: 80%;
@@ -574,6 +602,9 @@ footer {
     left: 0;
     top: 0;
     margin: 0;
+  }
+  .drink.viewing h3 {
+    font-size: 5rem;
   }
   .drink.viewing p,
   .drink.viewing ul {
@@ -593,7 +624,11 @@ footer {
   }
 }
 
+/* 1 drink wide */
 @media screen and (max-aspect-ratio: 8/9) {
+  .suggestions {
+    display: none;
+  }
   .drink {
     width: 100%;
   }
@@ -601,7 +636,7 @@ footer {
     width: 80%;
   }
   .drink.viewing > h3 {
-    font-size: 4rem;
+    font-size: 8rem;
   }
   .drink.viewing p {
     font-size: 1.8rem;
