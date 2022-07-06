@@ -16,7 +16,7 @@ let suggestions
 let fetchedDrinks = []
 // TODO: Fade older search history out as it gets longer.
 // Base fade on screen width (so the edge is completely faded).
-const SEARCH_HISTORY_LIMIT = 7
+const SEARCH_HISTORY_LIMIT = 5
 
 // -------------------------------------------------------------
 // Classes.
