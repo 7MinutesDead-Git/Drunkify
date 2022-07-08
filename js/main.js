@@ -17,6 +17,8 @@ let fetchedDrinks = []
 // TODO: Fade older search history out as it gets longer.
 // Base fade on screen width (so the edge is completely faded).
 const SEARCH_HISTORY_LIMIT = 5
+const DRINK_REVEAL_SPEED = 180  // milliseconds, lower is faster
+const AUTOSCROLL_DELAY = 75
 
 // -------------------------------------------------------------
 // Classes.
@@ -193,8 +195,6 @@ function toggleOpacityOnScroll(element) {
     // Fixes the search bar hiding when result window length does not require scrolling.
     // Example: When focused drink details are longer than a full page height,
     // but the search results are not, so the search bar is lost when unfocusing from drink.
-    // TODO: This makes the return transition a bit jittery. It would be better to base this on
-    //  if there is a scroll bar present when drink is not focused.
     else if (window.scrollY !== 0) {
         element.classList.add('hidden')
     }
@@ -205,9 +205,12 @@ function toggleOpacityOnScroll(element) {
 // Also scrolls to the drink button's current location on focus and unfocus.
 async function toggleDrinkFocus(drink) {
     drink.classList.toggle('viewing')
+    // Adding an arbitrary pause seems to eliminate most occurences of scrolling
+    // occasionally stopping abruptly when the user clicks on a drink button.
+    await wait(AUTOSCROLL_DELAY)
     drink.scrollIntoView({
         behavior: 'smooth',
-        block: 'center'
+        block: 'nearest'
     })
 }
 
@@ -328,7 +331,7 @@ function toggleLoadingIcon() {
 async function revealDrinks() {
     toggleLoadingIcon()
     for (const drink of document.querySelectorAll('.drink')) {
-        await wait(200)
+        await wait(DRINK_REVEAL_SPEED)
         drink.style.opacity = '1'
     }
 }
@@ -390,7 +393,7 @@ function clearScreen() {
 function addSearchToLocalHistory(search) {
     search = sanitizeInput(search)
     const history = JSON.parse(localStorage.getItem('searchHistory')) || []
-    if (!(history.includes(search))) {
+    if (!(history.includes(search)) && search.length > 0) {
         history.push(search)
 
         if (history.length > SEARCH_HISTORY_LIMIT) {
@@ -403,6 +406,9 @@ function addSearchToLocalHistory(search) {
 
 function updateSearchHistoryDisplay(historyArray) {
     suggestions.innerHTML = ''
+    let currentOpacity = 1
+    const opacityIncrement = 1 / historyArray.length
+
     for (const searchTerm of historyArray.reverse()) {
         const historyItem = document.createElement('li')
         historyItem.addEventListener('click', () => {
@@ -410,6 +416,8 @@ function updateSearchHistoryDisplay(historyArray) {
             getDrinks(searchInput.value)
         })
         historyItem.innerHTML = `> ${searchTerm}`
+        historyItem.style.opacity = currentOpacity
+        currentOpacity -= opacityIncrement
         suggestions.appendChild(historyItem)
     }
 }
