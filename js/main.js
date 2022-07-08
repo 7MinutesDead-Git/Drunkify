@@ -435,14 +435,27 @@ function cycleSuggestions() {
     const cycleDelay = 3000
     const fadeDelay = 500
     // Cycles through placeholder suggestions.
-    const suggestionsList = ['coffee', 'tequila', 'banana milk shake', 'espresso martini', 'grenadine', 'salt', 'amaretto sunrise', 'margarita']
+    // TODO: Replace with call to backend API to get suggestions.
+    const tempSuggestionsList = [
+        'coffee',
+        'tequila',
+        'banana milk shake',
+        'espresso martini',
+        'grenadine',
+        'salt',
+        'amaretto sunrise',
+        'margarita',
+        'orange juice',
+        'strawberries',
+        'daiquiri'
+    ]
     let index = 0
 
     setInterval(async () => {
         const input = document.querySelector('input')
         input.classList.add('hide-placeholder')
         await wait(fadeDelay)
-        input.placeholder = suggestionsList[index % suggestionsList.length]
+        input.placeholder = tempSuggestionsList[index % tempSuggestionsList.length]
         input.classList.remove('hide-placeholder')
         index++
     }, cycleDelay)
