@@ -430,6 +430,24 @@ function clearInput() {
     searchInput.value = ''
 }
 
+// Cycle through suggestions on the input placeholder text.
+function cycleSuggestions() {
+    const cycleDelay = 3000
+    const fadeDelay = 500
+    // Cycles through placeholder suggestions.
+    const suggestionsList = ['coffee', 'tequila', 'banana milk shake', 'espresso martini', 'grenadine', 'salt', 'amaretto sunrise', 'margarita']
+    let index = 0
+
+    setInterval(async () => {
+        const input = document.querySelector('input')
+        input.classList.add('hide-placeholder')
+        await wait(fadeDelay)
+        input.placeholder = suggestionsList[index % suggestionsList.length]
+        input.classList.remove('hide-placeholder')
+        index++
+    }, cycleDelay)
+}
+
 
 // -------------------------------------------------------------
 // Start here.
@@ -448,4 +466,5 @@ window.onload = () => {
     drinksOnDisplay = {}
     setupListeners()
     updateSearchHistoryDisplay(getSearchHistory())
+    cycleSuggestions()
 }

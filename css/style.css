@@ -106,8 +106,13 @@ input {
   font-style: italic;
 }
 input::placeholder {
+  opacity: 1;
   transition: all 0.3s ease-in-out;
 }
+input.hide-placeholder::placeholder {
+  opacity: 0;
+}
+
 input:hover {
   background: #565656;
 }
