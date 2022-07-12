@@ -275,6 +275,9 @@ async function fetchDrinksByName(url) {
     }
     catch (err) {
         console.log(`Caught this error: ${err}`)
+        if (!window.navigator.onLine) {
+            errors.storeError('You are offline. Are you still connected to the internet?')
+        }
     }
 }
 
