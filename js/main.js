@@ -230,8 +230,7 @@ function sanitizeInput(stringInput) {
 // Clears any previously existing drinks on screen.
 async function getDrinks(choice = null) {
     clearScreen()
-    if (!choice)
-        choice = sanitizeInput(searchInput.value)
+    choice ??= sanitizeInput(searchInput.value)
 
     // Store choice in localStorage to display as history.
     addSearchToLocalHistory(choice)
@@ -436,7 +435,6 @@ function cycleSuggestions() {
     const cycleDelay = 3000
     const fadeDelay = 500
     // Cycles through placeholder suggestions.
-    // TODO: Replace with call to backend API to get suggestions.
     const tempSuggestionsList = [
         'coffee',
         'tequila',
