@@ -14,8 +14,7 @@ let loadingIcon
 let suggestions
 
 let fetchedDrinks = []
-// TODO: Fade older search history out as it gets longer.
-// Base fade on screen width (so the edge is completely faded).
+// TODO: Base fade on screen width (so the edge is completely faded).
 const SEARCH_HISTORY_LIMIT = 5
 const DRINK_REVEAL_SPEED = 180  // milliseconds, lower is faster
 const AUTOSCROLL_DELAY = 75
@@ -172,6 +171,7 @@ function setupListeners() {
 
 // Setup click event listeners for the drink buttons.
 function setupDrinkListeners() {
+    // TODO: Refactor for event delegation in parent element rather than a bunch of event listeners here.
     drinkButtons = document.querySelectorAll('.drink')
     drinkButtons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -207,6 +207,7 @@ async function toggleDrinkFocus(drink) {
     drink.classList.toggle('viewing')
     // Adding an arbitrary pause seems to eliminate most occurences of scrolling
     // occasionally stopping abruptly when the user clicks on a drink button.
+    // TODO: Find a more programmatic solution to this :P
     await wait(AUTOSCROLL_DELAY)
     drink.scrollIntoView({
         behavior: 'smooth',
