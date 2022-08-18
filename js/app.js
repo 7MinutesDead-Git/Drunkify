@@ -44,10 +44,12 @@ function setupListeners() {
         updateBrowserHistoryAndURL('')
         errors.clearErrors()
     })
+
     searchButton.addEventListener('click', () => {
         suggestions.classList.add('hidden')
         getDrinks()
     })
+
     searchInput.addEventListener('keyup', e => {
         if (e.key === 'Enter') {
             suggestions.classList.add('hidden')
@@ -55,14 +57,17 @@ function setupListeners() {
         // Searching as we type is actually GREAT.
         getDrinks()
     })
+
     searchInput.addEventListener('focus', () => {
         console.log('focus')
         suggestions.classList.remove('hidden')
     })
+
     searchInput.addEventListener('focusout', () => {
         console.log('focusout')
         suggestions.classList.add('hidden')
     })
+
     window.onscroll = () => {
         toggleOpacityOnScroll(searchSection)
     }
