@@ -18,6 +18,14 @@ let fetchedDrinks = []
 const SEARCH_HISTORY_LIMIT = 5
 const DRINK_REVEAL_SPEED = 180  // milliseconds, lower is faster
 const AUTOSCROLL_DELAY = 75
+// For letting the user know the search results are already present.
+const BACKGROUND_FLASH_DURATION = 300
+
+let requestURL = new URL(window.location.href)
+let requestParams = new URLSearchParams(requestURL.searchParams)
+for (const param of requestParams) {
+    console.log(param)
+}
 
 
 // -------------------------------------------------------------
@@ -32,13 +40,16 @@ function setupListeners() {
     clearButton.addEventListener('click', () => {
         clearScreen()
         clearInput()
+        updateBrowserHistoryAndURL('')
         errors.clearErrors()
     })
     searchButton.addEventListener('click', () => {
+        suggestions.classList.add('hidden')
         getDrinks()
     })
     searchInput.addEventListener('keypress', e => {
         if (e.key === 'Enter')
+            suggestions.classList.add('hidden')
             getDrinks()
     })
     searchInput.addEventListener('focus', () => {
@@ -65,7 +76,7 @@ function setupDrinkListeners() {
                 searchInput.value = e.target.innerText
                 getDrinks(searchInput.value)
             }
-            else
+            else {}
                 toggleDrinkFocus(button)
         })
     })
@@ -90,6 +101,19 @@ function toggleOpacityOnScroll(element) {
 // Also scrolls to the drink button's current location on focus and unfocus.
 async function toggleDrinkFocus(drink) {
     drink.classList.toggle('viewing')
+
+    // If we're focused on a drink, we want to set the URL to reflect the current drink
+    // so this drink can be shared.
+    if (drink.classList.contains('viewing')) {
+        requestParams.set('focus', 'true')
+        updateBrowserHistoryAndURL(drink.querySelector('h3').innerText)
+    }
+    // But since this is a toggle, if we're dropping focus, we should go back to the
+    // search term so overall searches can be shared too.
+    else {
+        requestParams.delete('focus')
+        updateBrowserHistoryAndURL(searchInput.value)
+    }
     // Adding an arbitrary pause seems to eliminate most occurences of scrolling
     // occasionally stopping abruptly when the user clicks on a drink button.
     // TODO: Find a more programmatic solution to this :P
@@ -111,14 +135,27 @@ function sanitizeInput(stringInput) {
     return alphaNumericOnly.toLowerCase()
 }
 
+function updateBrowserHistoryAndURL(searchTerm) {
+    requestParams.set('drink', searchTerm)
+    // set page url to reflect the search params
+    requestURL.search = requestParams.toString()
+    window.history.pushState({}, '', requestURL.href)
+}
+
 // Get the drinks from the API and display them on screen.
 // Clears any previously existing drinks on screen.
 async function getDrinks(choice = null) {
-    clearScreen()
     choice ??= sanitizeInput(searchInput.value)
 
+    // If search term is identical to last, don't re-fetch.
+    if (choice === requestParams.get('drink') && fetchedDrinks.length > 0) {
+        flashScreen()
+        return
+    }
+    clearScreen()
     // Store choice in localStorage to display as history.
     addSearchToLocalHistory(choice)
+    updateBrowserHistoryAndURL(choice)
 
     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
     const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${choice}`
@@ -137,6 +174,14 @@ async function getDrinks(choice = null) {
             revealDrinks()
             errors.renderErrors()
     })
+}
+
+// Momentarily flash the screen to indicate a successful search.
+function flashScreen() {
+    document.body.classList.add('flash')
+    setTimeout(() => {
+        document.body.classList.remove('flash')
+    }, BACKGROUND_FLASH_DURATION)
 }
 
 // Retrieve drink data by name and render them on the screen.
@@ -235,19 +280,10 @@ function drinkExists(drink) {
 
 // Reset the page to its empty state.
 async function clearScreen() {
-    fadeOutAllDrinks()
-    await wait(DRINK_REVEAL_SPEED)
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
 }
 
-// Fade out all drinks on the page.
-function fadeOutAllDrinks() {
-    for (const drink of document.querySelectorAll('.drink')) {
-        drink.style.boxShadow = 'none'
-        drink.style.opacity = '0'
-    }
-}
 
 // Add search term to local history.
 function addSearchToLocalHistory(search) {
@@ -320,9 +356,62 @@ function cycleSuggestions() {
     }, cycleDelay)
 }
 
+// Called when a user visits a direct link to a drink, likely from sharing or
+// bookmarking. Ensures asynchronous order of execution where the drink is fetched,
+// then the element is created, then the focus logic runs once the image has loaded.
+async function waitForDrinkThenFocus() {
+    const searchTerm = requestParams.get('drink')
+    if (searchTerm) {
+        searchInput.value = searchTerm
+        await getDrinks(searchTerm)
+        // This allows us to share specific drinks directly from the URL,
+        // so the drink is focused automatically (once fetched above).
+        if (requestParams.get('focus')) {
+            const drink = await getFocusedDrink()
+            await getFocusedDrinkHeader(drink)
+            await toggleDrinkFocus(drink)
+        }
+    }
+}
+
+// Returns a promise that resolves once the focused drink element is present.
+// This is necessary for sharing drinks directly, where we want to focus immediately
+// after an initial query from the URL.
+function getFocusedDrink() {
+    return new Promise((resolve) => {
+        const drink = document.querySelector('.drink')
+        if (drink) {
+            resolve(drink)
+        }
+        else {
+            setTimeout(() => {
+                resolve(getFocusedDrink())
+            }, 100)
+        }
+    })
+}
+
+// Returns a promise that resolves once the focused drink element is finished loading,
+// i.e. the image has completed loading and the the loading class is removed.
+// This is necessary for sharing drinks directly, where we want to focus immediately
+// after an initial query from the URL.
+function getFocusedDrinkHeader(drink) {
+    return new Promise((resolve) => {
+        const drinkHeader = drink.querySelector('h3')
+        if (drinkHeader && !drinkHeader.classList.contains('loading')) {
+            resolve(drinkHeader)
+        }
+        else {
+            setTimeout(() => {
+                resolve(getFocusedDrinkHeader(drink))
+            }, 100)
+        }
+    })
+}
+
 
 // -------------------------------------------------------------
-window.onload = () => {
+window.onload = async () => {
     // Add new property to window object for the sake of keeping track of previous scroll position.
     window.oldScroll = window.scrollY
     searchButton = document.querySelector("#getCocktails")
@@ -337,4 +426,5 @@ window.onload = () => {
     setupListeners()
     updateSearchHistoryDisplay(getSearchHistory())
     cycleSuggestions()
+    await waitForDrinkThenFocus()
 }

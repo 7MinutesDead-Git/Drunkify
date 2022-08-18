@@ -199,6 +199,10 @@ body {
   background: #181818;
   font-size: 20px;
   overflow-x: hidden;
+  transition: all 0.3s ease-in-out;
+}
+body.flash {
+  background: #313131;
 }
 .error-text {
   position: absolute;
