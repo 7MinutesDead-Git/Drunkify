@@ -7,6 +7,7 @@ let clearButton
 let searchInput
 let cocktailList
 let searchSection
+let searchChoice
 let errors
 let drinkButtons
 let drinksOnDisplay
@@ -47,10 +48,12 @@ function setupListeners() {
         suggestions.classList.add('hidden')
         getDrinks()
     })
-    searchInput.addEventListener('keypress', e => {
-        if (e.key === 'Enter')
+    searchInput.addEventListener('keyup', e => {
+        if (e.key === 'Enter') {
             suggestions.classList.add('hidden')
-            getDrinks()
+        }
+        // Searching as we type is actually GREAT.
+        getDrinks()
     })
     searchInput.addEventListener('focus', () => {
         console.log('focus')
@@ -102,6 +105,10 @@ function toggleOpacityOnScroll(element) {
 async function toggleDrinkFocus(drink) {
     drink.classList.toggle('viewing')
 
+    // If the user has made a selection, then it's likely their search term is useful,
+    // and thus should be added to the search history.
+    addSearchToLocalHistory(searchChoice)
+
     // If we're focused on a drink, we want to set the URL to reflect the current drink
     // so this drink can be shared.
     if (drink.classList.contains('viewing')) {
@@ -146,6 +153,8 @@ function updateBrowserHistoryAndURL(searchTerm) {
 // Clears any previously existing drinks on screen.
 async function getDrinks(choice = null) {
     choice ??= sanitizeInput(searchInput.value)
+    // Update global variable so this state can be used elsewhere.
+    searchChoice = choice
 
     // If search term is identical to last, don't re-fetch.
     if (choice === requestParams.get('drink') && fetchedDrinks.length > 0) {
@@ -153,8 +162,6 @@ async function getDrinks(choice = null) {
         return
     }
     clearScreen()
-    // Store choice in localStorage to display as history.
-    addSearchToLocalHistory(choice)
     updateBrowserHistoryAndURL(choice)
 
     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`
