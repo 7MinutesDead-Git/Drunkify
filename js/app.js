@@ -14,6 +14,8 @@ let drinksOnDisplay
 let loadingIcon
 let suggestions
 let fetchedDrinks = []
+// Timer to prevent excessive API calls while typing in the search input.
+let typingSearchTimer = setTimeout(() => {}, 0)
 
 // TODO: Base fade on screen width (so the edge is completely faded).
 const SEARCH_HISTORY_LIMIT = 5
@@ -21,6 +23,9 @@ const DRINK_REVEAL_SPEED = 180  // milliseconds, lower is faster
 const AUTOSCROLL_DELAY = 75
 // For letting the user know the search results are already present.
 const BACKGROUND_FLASH_DURATION = 300
+// Prevents some bugs when typing too quickly, like event listeners
+// not being prepared for the latest results.
+const TYPING_FETCH_DELAY = 100
 
 let requestURL = new URL(window.location.href)
 let requestParams = new URLSearchParams(requestURL.searchParams)
@@ -51,11 +56,14 @@ function setupListeners() {
     })
 
     searchInput.addEventListener('keyup', e => {
+        clearTimeout(typingSearchTimer)
         if (e.key === 'Enter') {
             suggestions.classList.add('hidden')
         }
         // Searching as we type is actually GREAT.
-        getDrinks()
+        typingSearchTimer = setTimeout(() => {
+            getDrinks()
+        }, TYPING_FETCH_DELAY)
     })
 
     searchInput.addEventListener('focus', () => {
@@ -371,7 +379,7 @@ function cycleSuggestions() {
 // Called when a user visits a direct link to a drink, likely from sharing or
 // bookmarking. Ensures asynchronous order of execution where the drink is fetched,
 // then the element is created, then the focus logic runs once the image has loaded.
-async function waitForDrinkThenFocus() {
+async function focusDrinkFromUrlRequest() {
     const searchTerm = requestParams.get('drink')
     if (searchTerm) {
         searchInput.value = searchTerm
@@ -438,5 +446,5 @@ window.onload = async () => {
     setupListeners()
     updateSearchHistoryDisplay(getSearchHistory())
     cycleSuggestions()
-    await waitForDrinkThenFocus()
+    await focusDrinkFromUrlRequest()
 }
