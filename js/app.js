@@ -13,6 +13,7 @@ let drinkButtons
 let drinksOnDisplay
 let loadingIcon
 let suggestions
+let suggestionLinks
 let fetchedDrinks = []
 // Timer to prevent excessive API calls while typing in the search input.
 let typingSearchTimer = setTimeout(() => {}, 0)
@@ -79,6 +80,20 @@ function setupListeners() {
     window.onscroll = () => {
         toggleOpacityOnScroll(searchSection)
     }
+    // Allows faded out older suggestions to be more legible when mousing over.
+    suggestions.addEventListener('mouseover', (e) => {
+        if (e.target.tagName === "LI") {
+            e.target.style.opacity = "1"
+        }
+    })
+    // Resets opacity when mouse leaves any one suggestion so fade is re-applied.
+    // This is in lieu of keeping track of initial opacity state for each li element.
+    // This is less efficient, but the array is tiny.
+    suggestions.addEventListener('mouseout', (e) => {
+        if (e.target.tagName === "LI") {
+            setSearchHistoryDisplayOpacity()
+        }
+    })
 }
 
 // Setup click event listeners for the drink buttons.
@@ -322,8 +337,6 @@ function addSearchToLocalHistory(search) {
 
 function updateSearchHistoryDisplay(historyArray) {
     suggestions.innerHTML = ''
-    let currentOpacity = 1
-    const opacityIncrement = 1 / historyArray.length
 
     for (const searchTerm of historyArray.reverse()) {
         const historyItem = document.createElement('li')
@@ -332,9 +345,20 @@ function updateSearchHistoryDisplay(historyArray) {
             getDrinks(searchInput.value)
         })
         historyItem.innerHTML = `> ${searchTerm}`
+        suggestions.appendChild(historyItem)
+    }
+    setSearchHistoryDisplayOpacity()
+}
+
+// Creates a smooth fade out of the older search history display elements.
+function setSearchHistoryDisplayOpacity() {
+    const historyArray = suggestions.querySelectorAll('li')
+    let currentOpacity = 1
+    const opacityIncrement = 1 / historyArray.length
+
+    for (const historyItem of historyArray) {
         historyItem.style.opacity = currentOpacity
         currentOpacity -= opacityIncrement
-        suggestions.appendChild(historyItem)
     }
 }
 
