@@ -1,5 +1,9 @@
+interface IngredientMeasurements {
+    [key: string]: string
+}
+
 // Check if given drink property key is not blank and not null.
-function drinkPropertyIsValid(drink, key) {
+function drinkPropertyIsValid(drink, key): boolean {
     return drink[key] !== null && drink[key].length > 0
 }
 
@@ -8,7 +12,7 @@ function drinkPropertyIsValid(drink, key) {
 function getIngredients(drink) {
     const ingredients = document.createElement('ul')
     ingredients.classList.add('ingredients')
-    const measurementPairs = {}
+    const measurementPairs: IngredientMeasurements = {}
     // To match the ingredients with their measurements, we can check the last character of the key name
     // since each measurement and ingredient name have a matching number suffix.
     // This works so long as there isn't more than 10 ingredients.
@@ -35,6 +39,7 @@ function getIngredients(drink) {
     }
     return ingredients
 }
+
 
 export default class Drink {
     constructor(apiData) {
