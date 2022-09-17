@@ -1,44 +1,44 @@
-import Drink from "./drink.js"
-import APIErrors from "./api-errors.js"
+import Drink from "./drink"
+import APIErrors from "./api-errors"
+import {UISettings} from "./constants"
+
+
 // -------------------------------------------------------------
-// TODO: Continue to encapsulate as much of these variables as possible.
-let searchButton
-let clearButton
-let searchInput
-let cocktailList
-let searchSection
-let searchChoice
-let errors
-let drinkButtons
-let drinksOnDisplay
-let loadingIcon
-let suggestions
-let suggestionLinks
-let fetchedDrinks = []
+// To be populated by drink names from the API, and a boolean to indicate whether they are presently displayed
+// in the results.
+interface DrinksOnDisplay {
+    [drinkName: string]: boolean
+}
+
+
+// -------------------------------------------------------------
+// TODO: Encapsulate as much of these type declarations as possible...
+// Also really want to try to avoid globals.
+let previousScroll: number = 0
+let searchButton: HTMLButtonElement
+let clearButton: HTMLButtonElement
+let searchInput: HTMLInputElement
+let cocktailList: HTMLUListElement | null
+// When it comes to <section> or <article> or other semantic HTML5 tags, there is no particularly specific type.
+// Everything at that point is an HTMLElement, which inherits from Element.
+let searchSection: HTMLElement
+let searchChoice: string
+let errors: APIErrors
+let drinkButtons: Array<Element> = []
+let drinksOnDisplay: DrinksOnDisplay
+let loadingIcon: HTMLButtonElement
+let suggestions: HTMLUListElement | null
+let fetchedDrinks: Response[]
 // Timer to prevent excessive API calls while typing in the search input.
 let typingSearchTimer = setTimeout(() => {}, 0)
-
-// TODO: Base fade on screen width (so the edge is completely faded).
-const SEARCH_HISTORY_LIMIT = 5
-const DRINK_REVEAL_SPEED = 180  // milliseconds, lower is faster
-const AUTOSCROLL_DELAY = 75
-// For letting the user know the search results are already present.
-const BACKGROUND_FLASH_DURATION = 300
-// Prevents some bugs when typing too quickly, like event listeners
-// not being prepared for the latest results.
-const TYPING_FETCH_DELAY = 100
-
 let requestURL = new URL(window.location.href)
 let requestParams = new URLSearchParams(requestURL.searchParams)
-for (const param of requestParams) {
-    console.log(param)
-}
 
 
 // -------------------------------------------------------------
 // Create a promise to resolve after a given delay in ms.
 // We can use this for animation-like effects or arbitrary delays.
-function wait(ms) {
+function wait(ms: number): Promise<Function> {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -56,15 +56,18 @@ function setupListeners() {
         getDrinks()
     })
 
-    searchInput.addEventListener('keyup', e => {
+    searchInput.addEventListener('keyup', (e) => {
+        // Since addEventListener results in an Event type, and not a KeyboardEvent,
+        // we need to cast it (type assertion in ts terms) to the correct type.
+        const keyboardEvent = <KeyboardEvent>e
         clearTimeout(typingSearchTimer)
-        if (e.key === 'Enter') {
+        if (keyboardEvent.key === 'Enter') {
             suggestions.classList.add('hidden')
         }
         // Searching as we type is actually GREAT.
         typingSearchTimer = setTimeout(() => {
             getDrinks()
-        }, TYPING_FETCH_DELAY)
+        }, UISettings.typingFetchDelay)
     })
 
     searchInput.addEventListener('focus', () => {
@@ -82,7 +85,7 @@ function setupListeners() {
     }
     // Allows faded out older suggestions to be more legible when mousing over.
     suggestions.addEventListener('mouseover', (e) => {
-        if (e.target.tagName === "LI") {
+        if (e.target && e.target.tagName === "LI") {
             e.target.style.opacity = "1"
         }
     })
@@ -90,7 +93,9 @@ function setupListeners() {
     // This is in lieu of keeping track of initial opacity state for each li element.
     // This is less efficient, but the array is tiny.
     suggestions.addEventListener('mouseout', (e) => {
-        if (e.target.tagName === "LI") {
+        // We can typecast (technically type assertion) the event target to an HTMLLIElement because we know it should be an LI element.
+        const targetElement = <Element>e.target
+        if (targetElement.tagName === "LI") {
             setSearchHistoryDisplayOpacity()
         }
     })
@@ -99,7 +104,7 @@ function setupListeners() {
 // Setup click event listeners for the drink buttons.
 function setupDrinkListeners() {
     // TODO: Refactor for event delegation in parent element rather than a bunch of event listeners here.
-    drinkButtons = document.querySelectorAll('.drink')
+    drinkButtons = [...document.querySelectorAll('.drink')]
     drinkButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             // Search by ingredient just by clicking on the ingredient link.
@@ -108,24 +113,24 @@ function setupDrinkListeners() {
                 getDrinks(searchInput.value)
             }
             else {}
-                toggleDrinkFocus(button)
+            toggleDrinkFocus(button)
         })
     })
 }
 
 // Show and hide an element when scrolling.
 // ie: Hide the search bar when scrolling down, but reveal it when trying to scroll back up to it.
-function toggleOpacityOnScroll(element) {
-    if (window.oldScroll > window.scrollY) {
+function toggleOpacityOnScroll(element: Element): void {
+    if (previousScroll > window.scrollY) {
         element.classList.remove('hidden')
     }
-    // Fixes the search bar hiding when result window length does not require scrolling.
-    // Example: When focused drink details are longer than a full page height,
+        // Fixes the search bar hiding when result window length does not require scrolling.
+        // Example: When focused drink details are longer than a full page height,
     // but the search results are not, so the search bar is lost when unfocusing from drink.
     else if (window.scrollY !== 0) {
         element.classList.add('hidden')
     }
-    window.oldScroll = window.scrollY
+    previousScroll = window.scrollY
 }
 
 // Enter and exit focus on a drink button.
@@ -143,7 +148,7 @@ async function toggleDrinkFocus(drink) {
         requestParams.set('focus', 'true')
         updateBrowserHistoryAndURL(drink.querySelector('h3').innerText)
     }
-    // But since this is a toggle, if we're dropping focus, we should go back to the
+        // But since this is a toggle, if we're dropping focus, we should go back to the
     // search term so overall searches can be shared too.
     else {
         requestParams.delete('focus')
@@ -152,7 +157,7 @@ async function toggleDrinkFocus(drink) {
     // Adding an arbitrary pause seems to eliminate most occurences of scrolling
     // occasionally stopping abruptly when the user clicks on a drink button.
     // TODO: Find a more programmatic solution to this :P
-    await wait(AUTOSCROLL_DELAY)
+    await wait(UISettings.autoScrollDelay)
     drink.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest'
@@ -179,7 +184,7 @@ function updateBrowserHistoryAndURL(searchTerm) {
 
 // Get the drinks from the API and display them on screen.
 // Clears any previously existing drinks on screen.
-async function getDrinks(choice = null) {
+async function getDrinks(choice: string | null = null) {
     choice ??= sanitizeInput(searchInput.value)
     // Update global variable so this state can be used elsewhere.
     searchChoice = choice
@@ -197,18 +202,16 @@ async function getDrinks(choice = null) {
 
     errors.clearErrors()
     toggleLoadingIcon()
-    const nameResponse = fetchDrinksByName(drinkURL)
+    const nameResponse = await fetchDrinksByName(drinkURL)
     const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
-    fetchedDrinks.push(nameResponse, ingredientResponse)
+    fetchedDrinks.push(nameResponse!, ingredientResponse!)
     // We should wait for all drink API fetches to complete successfully, otherwise
     // we run into issues where drinks are rendered before the API has responded,
     // resulting in empty spaces and missing drinks or information.
-    Promise.allSettled(fetchedDrinks)
-        .then(() => {
-            setupDrinkListeners()
-            revealDrinks()
-            errors.renderErrors()
-    })
+    await Promise.allSettled(fetchedDrinks)
+    setupDrinkListeners()
+    await revealDrinks()
+    errors.renderErrors()
 }
 
 // Momentarily flash the screen to indicate a successful search.
@@ -216,7 +219,7 @@ function flashScreen() {
     document.body.classList.add('flash')
     setTimeout(() => {
         document.body.classList.remove('flash')
-    }, BACKGROUND_FLASH_DURATION)
+    }, UISettings.backgroundFlashDuration)
 }
 
 // Retrieve drink data by name and render them on the screen.
@@ -225,7 +228,7 @@ async function fetchDrinksByName(url) {
     try {
         console.log('Fetching drinks by name...')
         const response = await fetch(url)
-        errors.storeError(response.status)
+        errors.storeError(response.status.toString())
 
         const data = await response.json()
         console.log("Drink by name data:")
@@ -299,7 +302,7 @@ function toggleLoadingIcon() {
 async function revealDrinks() {
     toggleLoadingIcon()
     for (const drink of document.querySelectorAll('.drink')) {
-        await wait(DRINK_REVEAL_SPEED)
+        await wait(UISettings.drinkRevealSpeed)
         drink.style.opacity = '1'
     }
 }
@@ -314,7 +317,7 @@ function drinkExists(drink) {
 
 
 // Reset the page to its empty state.
-async function clearScreen() {
+function clearScreen() {
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
 }
@@ -327,7 +330,7 @@ function addSearchToLocalHistory(search) {
     if (!(history.includes(search)) && search.length > 0) {
         history.push(search)
 
-        if (history.length > SEARCH_HISTORY_LIMIT) {
+        if (history.length > UISettings.searchHistoryLimit) {
             history.shift()
         }
         localStorage.setItem('searchHistory', JSON.stringify(history))
@@ -453,18 +456,33 @@ function getFocusedDrinkHeader(drink) {
     })
 }
 
+// Checks to see if any crucial HTML elements are missing. Fail process gracefully if so.
+function nullCheck(...elements: HTMLElement[]) {
+    for (const element of elements) {
+        if (!element) {
+            console.error("Null or missing element: ", { element })
+            throw new Error(`Element is null. Check your HTML!`)
+        }
+    }
+}
+
 
 // -------------------------------------------------------------
+// TODO: Don't think onload is necessary anymore when we can instead defer the script.
 window.onload = async () => {
-    // Add new property to window object for the sake of keeping track of previous scroll position.
-    window.oldScroll = window.scrollY
-    searchButton = document.querySelector("#getCocktails")
-    clearButton = document.querySelector("#clearCocktails")
-    searchInput = document.querySelector("input")
-    suggestions = document.querySelector(".suggestions")
-    cocktailList = document.querySelector('.cocktails')
-    searchSection = document.querySelector('.search-section')
-    loadingIcon = document.querySelector('.lds-ellipsis')
+    previousScroll = window.scrollY
+    // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
+    // All elements should be present as these are defined in the HTML, therefore querySelector should never return null.
+    searchButton = document.querySelector("#getCocktails")!
+    clearButton = document.querySelector("#clearCocktails")!
+    searchInput = document.querySelector("input")!
+    suggestions = document.querySelector(".suggestions")!
+    cocktailList = document.querySelector('.cocktails')!
+    searchSection = document.querySelector('.search-section')!
+    loadingIcon = document.querySelector('.lds-ellipsis')!
+    // So we'll throw an error if that happens (woops lol).
+    nullCheck(searchButton, clearButton, searchInput, suggestions, cocktailList, searchSection, loadingIcon)
+
     errors = new APIErrors(cocktailList)
     drinksOnDisplay = {}
     setupListeners()
