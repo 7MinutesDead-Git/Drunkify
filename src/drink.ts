@@ -125,7 +125,6 @@ export default class Drink {
     setupHeart() {
         // TODO: Construct heart favorite icon
         const element = document.createElement('div')
-        element.innerHTML = svgHeart
         // element.type = 'checkbox'
         // if (this.favorited)
         //     element.checked = true

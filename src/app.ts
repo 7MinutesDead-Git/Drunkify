@@ -281,13 +281,18 @@ function renderDrinks(data: { [x: string]: any }) {
     for (const drinkData of data['drinks']) {
         console.log("Drink data from renderDrinks():", drinkData)
         if (!(drinkExists(drinkData))) {
-            drinksOnDisplay[drinkData['strDrink']] = true
-            // Note: createDrinkBlock() was replaced by Drink class here.
-            const drink = new Drink(drinkData)
-            console.log("🦩Rendering drink:🦩", drink)
+            try {
+                drinksOnDisplay[drinkData['strDrink']] = true
+                // Note: createDrinkBlock() was replaced by Drink class here.
+                const drink = new Drink(drinkData)
+                console.log("🦩Rendering drink:🦩", drink)
 
-            cocktailList.appendChild(drink.getDrinkElement())
-            console.log("🦩New cocktail list:🦩", cocktailList)
+                cocktailList.appendChild(drink.getDrinkElement())
+                console.log("🦩New cocktail list:🦩", cocktailList)
+            }
+            catch (err) {
+                console.error(`Something went wrong during renderDrinks(): ${err} 🦩 🦩 🦩`, data)
+            }
         }
     }
 }
