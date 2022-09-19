@@ -282,9 +282,10 @@ async function revealDrinks() {
 // Check if the given drink is already on the page.
 function drinkExists(drink) {
     const exists = drink['strDrink'] in drinksOnDisplay;
-    if (exists) {
-        console.log(`${drink['strDrink']} already exists on the page. Skipping.`);
-    }
+    // // Uncomment when debugging.
+    // if (exists) {
+    //     console.log(`${drink['strDrink']} already exists on the page. Skipping.`)
+    // }
     return exists;
 }
 // Reset the page to its empty state.

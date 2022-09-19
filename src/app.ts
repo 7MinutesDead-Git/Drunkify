@@ -312,10 +312,10 @@ async function revealDrinks(): Promise<void> {
 // Check if the given drink is already on the page.
 function drinkExists(drink: DrinkData): boolean {
     const exists = drink['strDrink']! in drinksOnDisplay
-
-    if (exists) {
-        console.log(`${drink['strDrink']} already exists on the page. Skipping.`)
-    }
+    // // Uncomment when debugging.
+    // if (exists) {
+    //     console.log(`${drink['strDrink']} already exists on the page. Skipping.`)
+    // }
     return exists
 }
 
