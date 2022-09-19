@@ -1,14 +1,18 @@
+import { IngredientMeasurements, DrinkData } from "./interfaces"
+
+
+
 // Check if given drink property key is not blank and not null.
-function drinkPropertyIsValid(drink, key) {
-    return drink[key] !== null && drink[key].length > 0
+function drinkPropertyIsValid(drink: DrinkData, key: string): boolean {
+    return drink[key] !== null && drink[key]!.length > 0
 }
 
 // Create the HTML structure for the ingredients list.
 // Match ingredients with ingredient measure amounts, and remove empty entries.
-function getIngredients(drink) {
+function getIngredients(drink: DrinkData): HTMLUListElement {
     const ingredients = document.createElement('ul')
     ingredients.classList.add('ingredients')
-    const measurementPairs = {}
+    const measurementPairs: IngredientMeasurements = {}
     // To match the ingredients with their measurements, we can check the last character of the key name
     // since each measurement and ingredient name have a matching number suffix.
     // This works so long as there isn't more than 10 ingredients.
@@ -18,7 +22,7 @@ function getIngredients(drink) {
         if (key.includes('Ingredient') && drinkPropertyIsValid(drink, key)) {
             measurementPairs[suffix] = drink[key]
         }
-        if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix].length > 0) {
+        if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix]!.length > 0) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
             ingredient.innerHTML = `<a>${measurementPairs[suffix]}</a>: ${measurement}`
@@ -36,8 +40,20 @@ function getIngredients(drink) {
     return ingredients
 }
 
+
 export default class Drink {
-    constructor(apiData) {
+    data: DrinkData
+    instructionsData: string | null
+    ingredientsElement: HTMLUListElement
+    drinkListItem: HTMLLIElement
+    nameHeader: HTMLHeadingElement
+    instructionsDiv: HTMLDivElement
+    imageElement: HTMLImageElement
+    heart: HTMLDivElement
+    favorited: boolean
+    childElements: Array<HTMLElement>
+
+    constructor(apiData: DrinkData) {
         this.data = apiData
         this.instructionsData = apiData['strInstructions']
         this.ingredientsElement = getIngredients(apiData)
@@ -87,9 +103,10 @@ export default class Drink {
         this.imageElement.onload = () => {
             this.imageElement.classList.remove('hidden')
             this.nameHeader.classList.remove('loading')
-            this.nameHeader.innerHTML = this.data['strDrink']
+            this.nameHeader.innerHTML = this.data['strDrink'] ?? 'No name found!'
         }
-        this.imageElement.src = this.data['strDrinkThumb']
+        // TODO: Display a placeholder image if no image is found.
+        this.imageElement.src = this.data['strDrinkThumb'] ?? ''
     }
     setDrinkName() {
         this.nameHeader.innerHTML = "Loading..."
@@ -108,7 +125,6 @@ export default class Drink {
     setupHeart() {
         // TODO: Construct heart favorite icon
         const element = document.createElement('div')
-        element.innerHTML = svgHeart
         // element.type = 'checkbox'
         // if (this.favorited)
         //     element.checked = true

@@ -241,7 +241,7 @@ body.flash {
   width: 20rem;
   height: 20rem;
   border-radius: 50%;
-  box-shadow: 0 0 5rem 0.5rem rgba(0,0,0,0.7);
+  box-shadow: 0 0 1rem 0.5rem rgba(0,0,0,0.2);
   opacity: 1;
   transition: all 0.3s ease-in-out;
 }
@@ -335,17 +335,22 @@ footer {
 /******************************************
 /* Transitions.
 /*******************************************/
+.drink > img {
+  transition: all 0.2s ease-in-out;
+}
+.drink > h3 {
+  transition: all 0.5s ease-in-out;
+}
+
 .drink,
-.drink > img,
-.drink > h3,
 .drink.viewing {
   transition: all 0.3s ease-in-out;
 }
   .drink:hover img {
-    transform: scale(1.1) translateX(-2rem);
+    transform: scale(1.05) translateX(-1.4rem);
   }
   .drink:hover h3 {
-    left: 3rem;
+    left: 2rem;
   }
 
 .drink.viewing::before {
