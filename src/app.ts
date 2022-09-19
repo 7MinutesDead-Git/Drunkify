@@ -20,7 +20,10 @@ let drinkButtons: Element[]
 let drinksOnDisplay: DrinksOnDisplay
 let loadingIcon: HTMLButtonElement
 let suggestions: HTMLUListElement
-let fetchedDrinks: Promise<Response | undefined>[]
+// TODO: This is some dumb typing in need of refactoring because I'm using fetched drinks in two places:
+//  - one where the Promise is placed in the array, and
+//  - the other where the awaited Response is used.
+let fetchedDrinks: (Promise<Response | undefined> | Response | undefined)[]
 // Timer to prevent excessive API calls while typing in the search input.
 let typingSearchTimer = setTimeout(() => {}, 0)
 let requestURL = new URL(window.location.href)
@@ -202,7 +205,7 @@ async function getDrinks(choice: string | null = null) {
     // Removed awaits here, so that fetchedDrinks array can be all pending Promises, rather than a
     // mix of Promises and Responses. Might break?
     const nameResponse = fetchDrinksByName(drinkURL)
-    const ingredientResponse = fetchDrinksByIngredient(ingredientURL)
+    const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
     fetchedDrinks.push(nameResponse, ingredientResponse)
     // We should wait for all drink API fetches to complete successfully, otherwise
     // we run into issues where drinks are rendered before the API has responded,
@@ -229,7 +232,6 @@ async function fetchDrinksByName(url: string): Promise<Response | undefined> {
         errors.storeError(response.status.toString())
 
         const data = await response.json()
-        console.log("🦩Fetched drinks by name:🦩", data)
         if (data['drinks']) {
             renderDrinks(data)
         }
@@ -279,16 +281,12 @@ async function fetchDrinksByIngredient(idURL: string) {
 // TODO: Make an interface for json api response.
 function renderDrinks(data: { [x: string]: any }) {
     for (const drinkData of data['drinks']) {
-        console.log("Drink data from renderDrinks():", drinkData)
         if (!(drinkExists(drinkData))) {
             try {
                 drinksOnDisplay[drinkData['strDrink']] = true
                 // Note: createDrinkBlock() was replaced by Drink class here.
                 const drink = new Drink(drinkData)
-                console.log("🦩Rendering drink:🦩", drink)
-
                 cocktailList.appendChild(drink.getDrinkElement())
-                console.log("🦩New cocktail list:🦩", cocktailList)
             }
             catch (err) {
                 console.error(`Something went wrong during renderDrinks(): ${err} 🦩 🦩 🦩`, data)
