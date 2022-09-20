@@ -10,4 +10,5 @@ export interface IngredientMeasurements {
 
 export interface DrinkData {
     [key: string]: string | null
+    [Symbol.iterator](): Iterator<string>
 }

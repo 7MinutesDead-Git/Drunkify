@@ -257,7 +257,7 @@ async function fetchDrinksByName(url: string): Promise<Response | undefined> {
 
 // Retrieve drink data by ingredient, then search by ID with name function to get full drink data.
 // Returns the response object for managing Promises.
-async function fetchDrinksByIngredient(idURL: string) {
+async function fetchDrinksByIngredient(idURL: string): Promise<Response | undefined> {
     try {
         const response = await fetch(idURL)
         errors.storeError(response.status.toString())
@@ -286,7 +286,7 @@ async function fetchDrinksByIngredient(idURL: string) {
 }
 
 // Create each drink block and append them to the cocktail list to be displayed.
-// TODO: Make an interface for json api response.
+// TODO: Make an interface for json api response and replace any.
 function renderDrinks(data: { [x: string]: any }) {
     for (const drinkData of data['drinks']) {
         if (!(drinkExists(drinkData))) {

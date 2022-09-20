@@ -258,7 +258,7 @@ async function fetchDrinksByIngredient(idURL) {
     }
 }
 // Create each drink block and append them to the cocktail list to be displayed.
-// TODO: Make an interface for json api response.
+// TODO: Make an interface for json api response and replace any.
 function renderDrinks(data) {
     for (const drinkData of data['drinks']) {
         if (!(drinkExists(drinkData))) {
