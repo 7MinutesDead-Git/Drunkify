@@ -28,9 +28,6 @@ export default class APIErrors {
         if (this.cocktailList.childElementCount === 0) {
             for (const error in this.errors)
                 this.errorSpan.innerHTML += `<p>${error}</p>`
-        } else {
-            for (const error in this.errors)
-                console.log(error)
         }
     }
     clearErrors() {
