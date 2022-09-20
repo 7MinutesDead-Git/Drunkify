@@ -4,6 +4,7 @@ import { UISettings } from "./constants.js";
 // -------------------------------------------------------------
 // TODO: Encapsulate as much of these type declarations as possible...
 // Also really want to try to avoid globals.
+const repoURL = 'https://github.com/7MinutesDead-Git/Drunkify';
 let previousScroll = 0;
 let searchButton;
 let clearButton;
@@ -34,6 +35,12 @@ function wait(ms) {
 }
 // Setup user input event listeners.
 function setupListeners() {
+    // Refreshes page when navigating forward or backward.
+    window.addEventListener('popstate', () => {
+        // TODO: Reloading causes a loss of browser history, so we can really only go back once.
+        //  Store browser history in local storage and reload it on page load.
+        window.location.reload();
+    });
     clearButton.addEventListener('click', () => {
         clearScreen();
         clearInput();
@@ -281,12 +288,7 @@ async function revealDrinks() {
 }
 // Check if the given drink is already on the page.
 function drinkExists(drink) {
-    const exists = drink['strDrink'] in drinksOnDisplay;
-    // // Uncomment when debugging.
-    // if (exists) {
-    //     console.log(`${drink['strDrink']} already exists on the page. Skipping.`)
-    // }
-    return exists;
+    return drink['strDrink'] in drinksOnDisplay;
 }
 // Reset the page to its empty state.
 function clearScreen() {
@@ -426,6 +428,7 @@ function nullCheck(...elements) {
 // -------------------------------------------------------------
 // TODO: Don't think onload is necessary anymore when we can instead defer the script.
 window.onload = async () => {
+    console.log(`🦩 Oh, inspecting are we!? If you want to see some typescript, head over to ${repoURL} 🦩`);
     previousScroll = window.scrollY;
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator
     // All elements should be present as these are defined in the HTML, therefore querySelector should never return null.
