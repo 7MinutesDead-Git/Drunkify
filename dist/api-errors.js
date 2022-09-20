@@ -21,10 +21,6 @@ export default class APIErrors {
             for (const error in this.errors)
                 this.errorSpan.innerHTML += `<p>${error}</p>`;
         }
-        else {
-            for (const error in this.errors)
-                console.log(error);
-        }
     }
     clearErrors() {
         this.errors = {};
