@@ -350,7 +350,8 @@ footer {
     transform: scale(1.05) translateX(-1.4rem);
   }
   .drink:hover h3 {
-    left: 2rem;
+    left: 3rem;
+    z-index: 1;
   }
 
 .drink.viewing::before {
