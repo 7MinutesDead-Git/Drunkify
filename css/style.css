@@ -120,7 +120,7 @@ input:hover::placeholder {
   color: white;
 }
 input:focus {
-  background: #181818;
+  background: #161616;
   outline: #ff0051;
 }
 input:focus::placeholder {
@@ -340,7 +340,14 @@ footer {
 }
 .drink > h3 {
   transition: all 0.5s ease-in-out;
+  border-radius: 0.2rem;
+  padding: 0.5rem;
 }
+  .drink > h3:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05);
+    background: linear-gradient(to right, rgba(255,0,81,0.9) 80%, rgba(0,0,0,0) 100%) !important;
+  }
 
 .drink,
 .drink.viewing {
@@ -352,6 +359,7 @@ footer {
   .drink:hover h3 {
     left: 3rem;
     z-index: 1;
+    background: linear-gradient(to right, rgba(255,0,81,0.9) 0%, rgba(0,0,0,0) 100%);
   }
 
 .drink.viewing::before {
