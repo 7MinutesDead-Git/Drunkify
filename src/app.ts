@@ -108,15 +108,15 @@ function setupListeners() {
 function setupDrinkListeners(): void {
     // TODO: Refactor for event delegation in parent element rather than a bunch of event listeners here.
     drinkButtons = [...document.querySelectorAll('.drink')]
-    drinkButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+    drinkButtons.forEach(drink => {
+        drink.addEventListener('click', (e) => {
             const targetElement = <HTMLElement>e.target
             // Search by ingredient just by clicking on the ingredient link.
             if (targetElement.tagName === 'A') {
                 searchInput.value = targetElement.innerText
                 getDrinks(searchInput.value)
             }
-            toggleDrinkFocus(<HTMLElement>button)
+            toggleDrinkFocus(<HTMLElement>drink)
         })
     })
 }
