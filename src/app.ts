@@ -39,7 +39,7 @@ function wait(ms: number): Promise<Function> {
 }
 
 // Setup user input event listeners.
-function setupListeners() {
+function setupListeners(): void {
     // Refreshes page when navigating forward or backward.
     window.addEventListener('popstate', () => {
         // TODO: Reloading causes a loss of browser history, so we can really only go back once.
