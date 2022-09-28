@@ -374,7 +374,12 @@ footer {
 }
 .drink.viewing a {
   cursor: pointer;
+  transition: all 1s ease-in-out;
 }
+  .drink.viewing a:hover {
+    color: #e1e1df;
+    transition: none;
+  }
 .drink.viewing {
   user-select: none;
   animation: show 0.5s ease-in-out;
