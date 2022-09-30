@@ -386,7 +386,7 @@ footer {
   }
 .drink.viewing {
   user-select: none;
-  animation: show 0.5s ease-in-out;
+  animation: show 1.1s ease-in-out;
   z-index: 99;
   position: absolute;
   top: -1rem;
@@ -395,7 +395,7 @@ footer {
   justify-content: flex-start;
   align-items: flex-start;
   margin-top: 4rem;
-  transition: all 1s ease-in-out;
+  transition: all 0.6s ease-in-out;
 }
 .drink.viewing .drink-instructions {
   display: block;
@@ -405,7 +405,7 @@ footer {
   animation: show 2s ease-in-out 1s forwards;
   font-style: italic;
 }
-.drink.viewing .ingredients{
+.drink.viewing .ingredients {
   transition: all 1s ease-in-out;
   display: block;
   width: 200%;
@@ -414,6 +414,7 @@ footer {
   animation: show 1s ease-in-out 0.5s forwards;
 }
   .drink.viewing:hover .drink-image {
+    transition: all 1s ease-in-out;
     transform: scale(1);
   }
   .drink.viewing .drink-image:hover ~ .drink-name{
