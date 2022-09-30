@@ -146,7 +146,7 @@ async function toggleDrinkFocus(drink: HTMLElement) {
     // so this drink can be shared.
     if (drink.classList.contains('viewing')) {
         requestParams.set('focus', 'true')
-        const drinkHeader = drink.querySelector('h3')
+        const drinkHeader = drink.querySelector('.drink-name') as HTMLElement
         if (!drinkHeader) {
             console.error("Drink rendered without a header!", drink)
             throw new Error("Drink rendered without a header. Check the Drink class!")
