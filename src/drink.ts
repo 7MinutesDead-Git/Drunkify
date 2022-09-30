@@ -1,7 +1,6 @@
 import { IngredientMeasurements, DrinkData } from "./interfaces"
 
 
-
 // Check if given drink property key is not blank and not null.
 function drinkPropertyIsValid(drink: DrinkData, key: string): boolean {
     return drink[key] !== null && drink[key]!.length > 0

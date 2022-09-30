@@ -119,9 +119,12 @@ function setupListeners() {
         }
     });
 }
+// Setups up event listeners on drink ingredient elements.
+// Should only be invoked once the drinks have been added to the DOM.
 function setupIngredientsListeners() {
     ingredientsMatrix = document.querySelectorAll('.ingredients');
     ingredientsMatrix.forEach((ingredientsList) => {
+        // ;)
         ingredientsList.addEventListener('mouseover', (e) => {
             const targetElement = e.target;
             if (targetElement.classList.contains('ingredient-link')) {
@@ -130,6 +133,8 @@ function setupIngredientsListeners() {
         });
     });
 }
+// Ensures the Easter Egg event does not trigger unless the user is mousing over ingredients long enough to
+// indicate playing around with the effects.
 function manageEasterEggTimer(element) {
     clearTimeout(easterEggTimer);
     easterEggTrigger++;
@@ -142,6 +147,8 @@ function manageEasterEggTimer(element) {
         }, UISettings.easterEggDelay);
     }
 }
+// Once the Easter Egg is triggered, this function assigns a new color with each mouse over.
+// Given a long enough pause, the Easter Egg effect will be removed and reset.
 function createRainbows(ingredientElement) {
     clearTimeout(removeEasterEggTimer);
     const selectedColor = rainbowColors[rainbowIndex % rainbowColors.length];
@@ -153,6 +160,7 @@ function createRainbows(ingredientElement) {
         resetIngredientColors();
     }, UISettings.easterEggResetDelay);
 }
+// Resets ingredient link colors altered by easter egg to default values.
 function resetIngredientColors() {
     ingredientsMatrix.forEach((ingredientsList) => {
         ingredientsList.querySelectorAll('.ingredient-link').forEach((ingredient) => {
