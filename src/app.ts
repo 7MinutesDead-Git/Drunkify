@@ -24,6 +24,38 @@ let suggestions: HTMLUListElement
 let fetchedDrinks: Promise<Response | undefined>[]
 // Timer to prevent excessive API calls while typing in the search input.
 let typingSearchTimer = setTimeout(() => {}, 0)
+
+let ingredientsMatrix: NodeListOf<HTMLElement>
+let easterEggTimer = setTimeout(() => {}, 0)
+let removeEasterEggTimer = setTimeout(() => {}, 0)
+let easterEggTrigger = 0
+const rainbowColors = [
+    "#f07878",
+    "#f07892",
+    "#f078b0",
+    "#f078d6",
+    "#de78f0",
+    "#a678f0",
+    "#a478f0",
+    "#9278f0",
+    "#8078f0",
+    "#789cf0",
+    "#78c4f0",
+    "#78eaf0",
+    "#78f0d6",
+    "#78f0b2",
+    "#78f08e",
+    "#88f078",
+    "#aaf078",
+    "#d2f078",
+    "#f0ec78",
+    "#f0d078",
+    "#f0b678",
+    "#f09678",
+    "#f08678"
+]
+let rainbowIndex = 0
+
 let requestURL = new URL(window.location.href)
 let requestParams = new URLSearchParams(requestURL.searchParams)
 
@@ -101,6 +133,55 @@ function setupListeners(): void {
     })
 }
 
+function setupIngredientsListeners() {
+    ingredientsMatrix = document.querySelectorAll('.ingredients')
+    ingredientsMatrix.forEach((ingredientsList) => {
+        ingredientsList.addEventListener('mouseover', (e) => {
+            const targetElement = <HTMLElement>e.target
+            if (targetElement.classList.contains('ingredient-link')) {
+                manageEasterEggTimer(targetElement as HTMLAnchorElement)
+            }
+        })
+    })
+}
+
+function manageEasterEggTimer(element: HTMLAnchorElement) {
+    clearTimeout(easterEggTimer)
+    easterEggTrigger++
+
+    if (easterEggTrigger >= UISettings.easterEggThreshold) {
+        createRainbows(element)
+    }
+    else {
+        easterEggTimer = setTimeout(() => {
+            easterEggTrigger = 0
+        }, UISettings.easterEggDelay)
+    }
+}
+
+function createRainbows(ingredientElement: HTMLAnchorElement) {
+    clearTimeout(removeEasterEggTimer)
+    const selectedColor = rainbowColors[rainbowIndex % rainbowColors.length]
+    ingredientElement.style.setProperty('--ingredient-link-hover-color', selectedColor)
+    ingredientElement.style.setProperty('--ingredient-link-hover-glow', "0.5rem")
+    rainbowIndex++
+
+    removeEasterEggTimer = setTimeout(() => {
+        easterEggTrigger = 0
+        resetIngredientColors()
+    }, UISettings.easterEggResetDelay)
+}
+
+function resetIngredientColors() {
+    ingredientsMatrix.forEach((ingredientsList) => {
+        ingredientsList.querySelectorAll('.ingredient-link').forEach((ingredient) => {
+            const ingredientElement = ingredient as HTMLAnchorElement
+            ingredientElement.style.setProperty('--ingredient-link-hover-color', "white")
+            ingredientElement.style.setProperty('--ingredient-link-hover-glow', "0")
+        })
+    })
+}
+
 // Setup click event listeners for the drink buttons.
 function setupDrinkListeners(): void {
     // TODO: Refactor for event delegation in parent element rather than a bunch of event listeners here.
@@ -116,6 +197,7 @@ function setupDrinkListeners(): void {
             toggleDrinkFocus(<HTMLElement>drink)
         })
     })
+    setupIngredientsListeners()
 }
 
 // Show and hide an element when scrolling.

@@ -20,7 +20,7 @@ function getIngredients(drink) {
         if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix].length > 0) {
             const measurement = drink[key];
             const ingredient = document.createElement('li');
-            ingredient.innerHTML = `<a>${measurementPairs[suffix]}</a>: ${measurement}`;
+            ingredient.innerHTML = `<a class="ingredient-link">${measurementPairs[suffix]}</a>: ${measurement}`;
             ingredient.classList.add('ingredient');
             ingredients.appendChild(ingredient);
         }

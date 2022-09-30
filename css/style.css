@@ -59,6 +59,10 @@ table {
     opacity: 0;
   }
 }
+:root {
+  --ingredient-link-hover-color: white;
+  --ingredient-link-hover-glow: 0;
+}
 
 /******************************************
 /* Search bar.
@@ -381,7 +385,8 @@ footer {
   transition: all 1s ease-in-out;
 }
   .drink.viewing a:hover {
-    color: #e1e1df;
+    color: var(--ingredient-link-hover-color);
+    text-shadow: 0 0 var(--ingredient-link-hover-glow) var(--ingredient-link-hover-color);
     transition: none;
   }
 .drink.viewing {
