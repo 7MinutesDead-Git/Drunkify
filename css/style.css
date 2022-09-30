@@ -389,6 +389,12 @@ footer {
     text-shadow: 0 0 var(--ingredient-link-hover-glow) var(--ingredient-link-hover-color);
     transition: none;
   }
+  /* For mobile press and drag. */
+  .drink.viewing a:active {
+    color: var(--ingredient-link-hover-color);
+    text-shadow: 0 0 var(--ingredient-link-hover-glow) var(--ingredient-link-hover-color);
+    transition: none;
+  }
 .drink.viewing {
   user-select: none;
   animation: show 1.1s ease-in-out;
