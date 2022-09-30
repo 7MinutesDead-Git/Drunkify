@@ -81,7 +81,7 @@ export default class Drink {
             const array = this.instructionsData.split('.')
             for (const instruction of array)
                 if (instruction.length > 0)
-                    result += `<p>${instruction}.</p>`
+                    result += `<p class="drink-instructions">${instruction}.</p>`
         }
         return result
     }
@@ -98,6 +98,7 @@ export default class Drink {
     }
     setupDrinkImage() {
         this.imageElement.classList.add('hidden')
+        this.imageElement.classList.add('drink-image')
 
         // To prevent seeing the image loading in before it's fully loaded.
         this.imageElement.onload = () => {
@@ -111,6 +112,7 @@ export default class Drink {
     setDrinkName() {
         this.nameHeader.innerHTML = "Loading..."
         this.nameHeader.classList.add('loading')
+        this.nameHeader.classList.add('drink-name')
     }
     setupDrink() {
         this.addDrinkStyling()
