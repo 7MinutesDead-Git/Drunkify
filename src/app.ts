@@ -21,10 +21,7 @@ let drinkButtons: Element[]
 let drinksOnDisplay: DrinksOnDisplay
 let loadingIcon: HTMLButtonElement
 let suggestions: HTMLUListElement
-// TODO: This is some dumb typing in need of refactoring because I'm using fetched drinks in two places:
-//  - one where the Promise is placed in the array, and
-//  - the other where the awaited Response is used.
-let fetchedDrinks: (Promise<Response | undefined> | Response | undefined)[]
+let fetchedDrinks: Promise<Response | undefined>[]
 // Timer to prevent excessive API calls while typing in the search input.
 let typingSearchTimer = setTimeout(() => {}, 0)
 let requestURL = new URL(window.location.href)
@@ -212,9 +209,8 @@ async function getDrinks(choice: string | null = null) {
     toggleLoadingIcon()
     // Removed awaits here, so that fetchedDrinks array can be all pending Promises, rather than a
     // mix of Promises and Responses. Might break?
-    const nameResponse = fetchDrinksByName(drinkURL)
-    const ingredientResponse = await fetchDrinksByIngredient(ingredientURL)
-    fetchedDrinks.push(nameResponse, ingredientResponse)
+    fetchedDrinks.push(fetchDrinksByName(drinkURL))
+    await fetchDrinksByIngredient(ingredientURL)
     // We should wait for all drink API fetches to complete successfully, otherwise
     // we run into issues where drinks are rendered before the API has responded,
     // resulting in empty spaces and missing drinks or information.
@@ -252,15 +248,18 @@ async function fetchDrinksByName(url: string): Promise<Response | undefined> {
         if (!window.navigator.onLine) {
             errors.storeError('You are offline. Are you still connected to the internet?')
         }
+        else {
+            throw new Error(<string>err)
+        }
     }
 }
 
-// Retrieve drink data by ingredient, then search by ID with name function to get full drink data.
-// Returns the response object for managing Promises.
-async function fetchDrinksByIngredient(idURL: string): Promise<Response | undefined> {
+// Fetches drink data from ingredient API, then adds subsequent drink API calls to the
+// fetchedDrinks array to be resolved in parallel.
+async function fetchDrinksByIngredient(idURL: string): Promise<void> {
     try {
         const response = await fetch(idURL)
-        errors.storeError(response.status.toString())
+        errors.storeError(response.status?.toString())
         const data = await response.json()
 
         if (data['drinks']) {
@@ -268,9 +267,6 @@ async function fetchDrinksByIngredient(idURL: string): Promise<Response | undefi
                 if (!(drinkExists(drink))) {
                     const idNumber = drink['idDrink']
                     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idNumber}`
-                    // If we were to await fetchDrinks here, each iteration of this loop will wait making things slow.
-                    // We should return this Promise here to be used in collecting all Promises for
-                    // Promise.all(), to wait for in getDrinks().
                     fetchedDrinks.push(fetchDrinksByName(drinkURL))
                 }
             }
@@ -278,7 +274,6 @@ async function fetchDrinksByIngredient(idURL: string): Promise<Response | undefi
         else {
             errors.storeError(`Couldn't find "${searchInput.value}" :(`)
         }
-        return response
     }
     catch (err) {
         console.log(`Caught this error: ${err}`)
@@ -356,6 +351,7 @@ function updateSearchHistoryDisplay(historyArray: string[]) {
             getDrinks(searchInput.value)
         })
         historyItem.innerHTML = `> ${searchTerm}`
+        historyItem.classList.add('suggestions-item')
         suggestions.appendChild(historyItem)
     }
     setSearchHistoryDisplayOpacity()
