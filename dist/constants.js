@@ -12,4 +12,4 @@ UISettings.backgroundFlashDuration = 300;
 UISettings.typingFetchDelay = 100;
 UISettings.easterEggDelay = 2000;
 UISettings.easterEggResetDelay = 750;
-UISettings.easterEggThreshold = 17;
+UISettings.easterEggThreshold = 13;
