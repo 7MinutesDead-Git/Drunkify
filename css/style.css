@@ -93,7 +93,7 @@ table {
   opacity: 0;
   padding: 0 3rem 3rem 3rem;
 }
-input {
+#search {
   transition: all 0.3s ease-in-out;
   border: none;
   background: #3c3c3c;
@@ -105,29 +105,29 @@ input {
   font-weight: 100;
   font-style: italic;
 }
-input::placeholder {
+#search::placeholder {
   opacity: 1;
   transition: all 0.3s ease-in-out;
 }
-input.hide-placeholder::placeholder {
+#search.hide-placeholder::placeholder {
   opacity: 0;
 }
 
-input:hover {
+#search:hover {
   background: #565656;
 }
-input:hover::placeholder {
+#search:hover::placeholder {
   color: white;
 }
-input:focus {
+#search:focus {
   background: #161616;
   outline: #ff0051;
 }
-input:focus::placeholder {
+#search:focus::placeholder {
   color: #181818;
 }
 button {
-  transition: all 0.3s ease-in-out;
+  transition: all 1s ease-in-out;
   border: none;
   background: #ff0051;
   color: #3c3c3c;
@@ -141,6 +141,7 @@ button {
 button:hover {
   background: #181818;
   color: #ff0051;
+  transition: all 0.1s ease-in-out;
   transform: translateY(-5px);
 }
 #clearCocktails {
@@ -171,16 +172,19 @@ button:hover {
   transform: translateY(-10px);
 }
 /* TODO: Make media queries for suggestions box. */
-.suggestions > li {
+.suggestions-item {
   margin: 0 1rem 0 0;
-  transition: all 0.3s ease-in-out;
+  text-decoration: dotted underline;
+  transition: all 1s ease-in-out;
   text-shadow: 0 0 0.1rem #181818;
   flex: 0 0 auto;
 }
-.suggestions > li:hover {
+.suggestions-item:hover {
   color: beige;
+  text-decoration: dotted underline;
   text-decoration-color: beige;
-  transform: translateY(-5px);
+  transition: all 0.1s ease-in-out;
+  transform: translateY(-2px);
 }
 
 
@@ -237,7 +241,7 @@ body.flash {
   opacity: 0;
 }
 
-.drink > img {
+.drink-image {
   width: 20rem;
   height: 20rem;
   border-radius: 50%;
@@ -245,10 +249,10 @@ body.flash {
   opacity: 1;
   transition: all 0.3s ease-in-out;
 }
-.drink > img.hidden {
+.drink-image.hidden {
   opacity: 0;
 }
-.drink > h3 {
+.drink-name {
   user-select: none;
   font-size: 1.3rem;
   font-weight: 100;
@@ -259,14 +263,14 @@ body.flash {
   color: white;
   text-shadow: 0 0.3rem 0.3rem #000;
 }
-.drink p {
+.drink .drink-instructions {
   display: none;
   opacity: 0;
   color: #6b6f78;
   line-height: 1.5;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
 }
-.drink ul {
+.drink .ingredients{
   display: none;
   opacity: 0;
   color: #7b8796;
@@ -335,15 +339,15 @@ footer {
 /******************************************
 /* Transitions.
 /*******************************************/
-.drink > img {
+.drink-image {
   transition: all 0.2s ease-in-out;
 }
-.drink > h3 {
+.drink-name {
   transition: all 0.5s ease-in-out;
   border-radius: 0.2rem;
   padding: 0.5rem;
 }
-  .drink > h3:hover {
+  .drink-name:hover {
     transition: all 0.2s ease-in-out;
     transform: scale(1.05);
     background: linear-gradient(to right, rgba(255,0,81,0.9) 80%, rgba(0,0,0,0) 100%) !important;
@@ -353,10 +357,10 @@ footer {
 .drink.viewing {
   transition: all 0.3s ease-in-out;
 }
-  .drink:hover img {
+  .drink:hover .drink-image {
     transform: scale(1.05) translateX(-1.4rem);
   }
-  .drink:hover h3 {
+  .drink:hover .drink-name{
     left: 3rem;
     z-index: 1;
     background: linear-gradient(to right, rgba(255,0,81,0.9) 0%, rgba(0,0,0,0) 100%);
@@ -393,7 +397,7 @@ footer {
   margin-top: 4rem;
   transition: all 1s ease-in-out;
 }
-.drink.viewing p {
+.drink.viewing .drink-instructions {
   display: block;
   width: 200%;
   font-weight: 100;
@@ -401,7 +405,7 @@ footer {
   animation: show 2s ease-in-out 1s forwards;
   font-style: italic;
 }
-.drink.viewing ul {
+.drink.viewing .ingredients{
   transition: all 1s ease-in-out;
   display: block;
   width: 200%;
@@ -409,13 +413,13 @@ footer {
   margin: 0 0 1rem 0;
   animation: show 1s ease-in-out 0.5s forwards;
 }
-  .drink.viewing:hover img {
+  .drink.viewing:hover .drink-image {
     transform: scale(1);
   }
-  .drink.viewing img:hover ~ h3 {
+  .drink.viewing .drink-image:hover ~ .drink-name{
     transform: translateX(-0.4rem);
   }
-  .drink.viewing img:hover {
+  .drink.viewing .drink-image:hover {
     transform: scale(1.02);
   }
 
@@ -472,33 +476,33 @@ footer {
   .cocktails {
     margin: 4rem 12rem 3rem -3rem;
   }
-  input {
+  #search {
     width: 30%;
   }
   button {
     width: 15%;
   }
-  .drink h3 {
+  .drink-name {
     font-size: 1.2rem;
   }
   .drink {
     width: 17%;
   }
-  .drink.viewing p {
+  .drink.viewing .drink-instructions {
     font-size: 0.8rem;
   }
-  .drink.viewing ul {
+  .drink.viewing .ingredients{
     font-size: 0.8rem;
   }
-  .drink > img {
+  .drink-image {
     width: 30rem;
     height: 30rem;
   }
-  .drink > h3 {
+  .drink-name {
     top: -5rem;
     left: 8rem;
   }
-    .drink:hover h3 {
+    .drink:hover .drink-name{
       left: 9rem;
     }
 }
@@ -511,16 +515,16 @@ footer {
   .drink {
     width: 20%;
   }
-  .drink > img {
+  .drink-image {
     width: 22rem;
     height: 22rem;
   }
-  .drink > h3 {
+  .drink-name {
     top: -5rem;
     left: 3rem;
     font-size: 1.5rem;
   }
-  .drink:hover h3 {
+  .drink:hover .drink-name{
     left: 4rem;
   }
 }
@@ -543,11 +547,11 @@ footer {
   .suggestions {
     font-size: 1.5rem;
   }
-  input, button {
+  #search, button {
     font-size: 3rem;
     height: 5rem;
   }
-  input {
+  #search {
     width: 60%
   }
   button {
@@ -559,14 +563,14 @@ footer {
   .drink {
     width: 33%;
   }
-  .drink h3 {
+  .drink-name {
     font-size: 1.8rem;
   }
-  .drink.viewing img {
+  .drink.viewing .drink-image {
     width: 60vw;
     height: 60vw;
   }
-  .drink.viewing > h3 {
+  .drink.viewing > .drink-name{
     font-size: 3rem;
   }
   .drink.viewing {
@@ -576,11 +580,11 @@ footer {
     top: 0;
     margin: 0;
   }
-  .drink.viewing p {
+  .drink.viewing .drink-instructions {
     font-size: 1.3rem;
     color: antiquewhite;
   }
-  .drink.viewing ul {
+  .drink.viewing .ingredients{
     font-size: 1.1rem;
     color: floralwhite;
   }
@@ -598,11 +602,11 @@ footer {
   .drink {
     width: 50%;
   }
-  .drink > img {
+  .drink-image {
     width: 60vw;
     height: 60vw;
   }
-  .drink h3 {
+  .drink-name {
     font-size: 4rem;
   }
   .searchbar {
@@ -612,7 +616,7 @@ footer {
   label[for="search"] {
     font-size: 2rem;
   }
-  input {
+  #search {
     width: 70%;
     height: 5rem;
     font-size: 4rem;
@@ -632,22 +636,22 @@ footer {
     top: 0;
     margin: 0;
   }
-  .drink.viewing h3 {
+  .drink.viewing .drink-name{
     font-size: 5rem;
   }
-  .drink.viewing p,
-  .drink.viewing ul {
+  .drink.viewing .drink-instructions,
+  .drink.viewing .ingredients{
     width: 100%;
   }
-  .drink.viewing p {
+  .drink.viewing .drink-instructions {
     font-size: 1.5rem;
     color: antiquewhite;
   }
-  .drink.viewing ul {
+  .drink.viewing .ingredients{
     font-size: 1.3rem;
     color: floralwhite;
   }
-  .drink.viewing img {
+  .drink.viewing .drink-image {
     width: 80vw;
     height: 80vw;
   }
@@ -664,25 +668,25 @@ footer {
   .drink.viewing {
     width: 80%;
   }
-  .drink.viewing > h3 {
+  .drink.viewing > .drink-name{
     font-size: 8rem;
   }
-  .drink.viewing p {
+  .drink.viewing .drink-instructions {
     font-size: 1.8rem;
     color: floralwhite;
   }
-  .drink.viewing ul {
+  .drink.viewing .ingredients{
     font-size: 1.5rem;
     color: antiquewhite;
   }
   .cocktails {
     margin: 0 0 0 1rem;
   }
-  .drink > img {
+  .drink-image {
     width: 90vw;
     height: 90vw;
   }
-    .drink:hover img {
+    .drink:hover .drink-image {
       transform: scale(1.04) translateY(-1rem);
     }
 }
