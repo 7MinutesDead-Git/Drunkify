@@ -112,9 +112,17 @@ table {
 #search::placeholder {
   opacity: 1;
   transition: all 0.3s ease-in-out;
+  color: #6b6f78;
 }
 #search.hide-placeholder::placeholder {
   opacity: 0;
+}
+/*
+Transition does not work on placeholder pseudo-selector on Firefox,
+so we'll skip it for now.
+*/
+#search.hide-placeholder::-moz-placeholder {
+  opacity: 1;
 }
 
 #search:hover {
