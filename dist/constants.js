@@ -10,6 +10,6 @@ UISettings.backgroundFlashDuration = 300;
 // Prevents some bugs when typing too quickly, like event listeners
 // not being prepared for the latest results.
 UISettings.typingFetchDelay = 100;
-UISettings.easterEggDelay = 2000;
+UISettings.easterEggDelay = 1000;
 UISettings.easterEggResetDelay = 750;
-UISettings.easterEggThreshold = 13;
+UISettings.easterEggThreshold = 25;

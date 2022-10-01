@@ -10,7 +10,7 @@ export abstract class UISettings {
     // not being prepared for the latest results.
     public static typingFetchDelay = 100
 
-    public static easterEggDelay = 2000
+    public static easterEggDelay = 1000
     public static easterEggResetDelay = 750
-    public static easterEggThreshold = 13
+    public static easterEggThreshold = 25
 }
