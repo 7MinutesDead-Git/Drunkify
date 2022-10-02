@@ -18,6 +18,9 @@ let errors;
 let drinkButtons;
 let drinksOnDisplay;
 let loadingIcon;
+let longLoadMessage;
+let longerLoadMessage;
+let longestLoadMessage;
 let suggestions;
 let fetchedDrinks;
 // Timer to prevent excessive API calls while typing in the search input.
@@ -360,15 +363,24 @@ function renderDrinks(data) {
 }
 let longLoadTimer = setTimeout(() => { });
 function showLongLoadMessage() {
-    document.querySelector('.long-load-message').classList.add('show');
+    // lmao
+    longLoadMessage.classList.add('show');
+    setTimeout(() => {
+        longerLoadMessage.classList.add('show');
+        setTimeout(() => {
+            longestLoadMessage.classList.add('show');
+        }, UISettings.reallyLongLoadDelay);
+    }, UISettings.reallyLongLoadDelay);
 }
 function hideLongLoadMessage() {
-    document.querySelector('.long-load-message').classList.remove('show');
+    longLoadMessage.classList.remove('show');
+    longerLoadMessage.classList.remove('show');
+    longestLoadMessage.classList.remove('show');
 }
 function showLoadingIcon() {
     clearTimeout(longLoadTimer);
     loadingIcon.classList.add('visible');
-    longLoadTimer = setTimeout(showLongLoadMessage, 4000);
+    longLoadTimer = setTimeout(showLongLoadMessage, UISettings.longLoadMessageDelay);
 }
 function hideLoadingIcon() {
     clearTimeout(longLoadTimer);
@@ -538,8 +550,11 @@ window.onload = async () => {
     cocktailList = document.querySelector('.cocktails');
     searchSection = document.querySelector('.search-section');
     loadingIcon = document.querySelector('.lds-ellipsis');
+    longLoadMessage = document.querySelector('.long-load-message');
+    longerLoadMessage = document.querySelector('.longer-load-message');
+    longestLoadMessage = document.querySelector('.longest-load-message');
     // So we'll throw an error if that happens (woops lol).
-    nullCheck(searchButton, clearButton, searchInput, suggestions, cocktailList, searchSection, loadingIcon);
+    nullCheck(searchButton, clearButton, searchInput, suggestions, cocktailList, searchSection, loadingIcon, longLoadMessage, longerLoadMessage, longestLoadMessage);
     errors = new APIErrors(cocktailList);
     fetchedDrinks = [];
     drinksOnDisplay = {};

@@ -310,9 +310,11 @@ footer {
 /******************************************
 /* Loading icon.
 /*******************************************/
-.long-load-message {
+.long-load-message,
+.longer-load-message,
+.longest-load-message {
   position: absolute;
-  top: 40%;
+  top: 50%;
   margin: 0 auto;
   padding: 0 5rem;
   user-select: none;
@@ -322,7 +324,17 @@ footer {
   opacity: 0;
   transition: opacity 1s ease-in-out;
 }
-.long-load-message.show {
+.longer-load-message {
+  top: 70%;
+  left: 40%;
+}
+.longest-load-message {
+  top: 30%;
+  left: 50%;
+}
+.long-load-message.show,
+.longer-load-message.show,
+.longest-load-message.show {
   opacity: 1;
 }
 .lds-ellipsis {

@@ -9,6 +9,8 @@ export abstract class UISettings {
     // Prevents some bugs when typing too quickly, like event listeners
     // not being prepared for the latest results.
     public static typingFetchDelay = 100
+    public static longLoadMessageDelay = 4000
+    public static reallyLongLoadDelay = 12000
 
     public static easterEggDelay = 1000
     public static easterEggResetDelay = 750
