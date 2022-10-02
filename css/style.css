@@ -313,6 +313,7 @@ footer {
 .long-load-message,
 .longer-load-message,
 .longest-load-message {
+  display: none;
   position: absolute;
   top: 50%;
   margin: 0 auto;
@@ -335,6 +336,7 @@ footer {
 .long-load-message.show,
 .longer-load-message.show,
 .longest-load-message.show {
+  display: block;
   opacity: 1;
 }
 .lds-ellipsis {
