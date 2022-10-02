@@ -52,6 +52,8 @@ const rainbowColors = [
     "#f08678"
 ];
 let rainbowIndex = 0;
+const deadDatabaseMessage = "There was no response. We're sending a message to the guy trapped in the server room. Maybe try again later?";
+const deadClientMessage = "This thing says you're offline. Are you still connected to the internet?";
 let requestURL = new URL(window.location.href);
 let requestParams = new URLSearchParams(requestURL.searchParams);
 // -------------------------------------------------------------
@@ -266,7 +268,7 @@ async function getDrinks(choice = null) {
     const drinkURL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${choice}`;
     const ingredientURL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${choice}`;
     errors.clearErrors();
-    toggleLoadingIcon();
+    showLoadingIcon();
     // Removed awaits here, so that fetchedDrinks array can be all pending Promises, rather than a
     // mix of Promises and Responses. Might break?
     fetchedDrinks.push(fetchDrinksByName(drinkURL));
@@ -303,10 +305,11 @@ async function fetchDrinksByName(url) {
     }
     catch (err) {
         if (!window.navigator.onLine) {
-            errors.storeError('You are offline. Are you still connected to the internet?');
+            errors.storeError(deadClientMessage);
         }
         else {
-            throw new Error(err);
+            errors.storeError(deadDatabaseMessage);
+            console.error(deadDatabaseMessage);
         }
     }
 }
@@ -331,7 +334,11 @@ async function fetchDrinksByIngredient(idURL) {
         }
     }
     catch (err) {
-        console.log(`Caught this error: ${err}`);
+        if (!window.navigator.onLine) {
+            errors.storeError(deadClientMessage);
+        }
+        errors.storeError(deadDatabaseMessage);
+        console.error(deadDatabaseMessage);
     }
 }
 // Create each drink block and append them to the cocktail list to be displayed.
@@ -351,13 +358,27 @@ function renderDrinks(data) {
         }
     }
 }
-// Toggle the loading icon visibility.
-function toggleLoadingIcon() {
-    loadingIcon.classList.toggle('visible');
+let longLoadTimer = setTimeout(() => { });
+function showLongLoadMessage() {
+    document.querySelector('.long-load-message').classList.add('show');
+}
+function hideLongLoadMessage() {
+    document.querySelector('.long-load-message').classList.remove('show');
+}
+function showLoadingIcon() {
+    clearTimeout(longLoadTimer);
+    loadingIcon.classList.add('visible');
+    longLoadTimer = setTimeout(showLongLoadMessage, 4000);
+}
+function hideLoadingIcon() {
+    clearTimeout(longLoadTimer);
+    loadingIcon.classList.remove('visible');
+    hideLongLoadMessage();
 }
 // Gradually reveal each drink in the list.
 async function revealDrinks() {
-    toggleLoadingIcon();
+    clearTimeout(longLoadTimer);
+    hideLoadingIcon();
     for (const drink of document.querySelectorAll('.drink')) {
         await wait(UISettings.drinkRevealSpeed);
         drink.style.opacity = '1';
