@@ -14,5 +14,5 @@ export abstract class UISettings {
 
     public static easterEggDelay = 1000
     public static easterEggResetDelay = 750
-    public static easterEggThreshold = 25
+    public static easterEggThreshold = 8
 }

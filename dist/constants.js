@@ -14,4 +14,4 @@ UISettings.longLoadMessageDelay = 4000;
 UISettings.reallyLongLoadDelay = 12000;
 UISettings.easterEggDelay = 1000;
 UISettings.easterEggResetDelay = 750;
-UISettings.easterEggThreshold = 25;
+UISettings.easterEggThreshold = 8;
