@@ -103,6 +103,11 @@ function setupListeners() {
     searchInput.addEventListener('focusout', () => {
         suggestions.classList.add('hidden');
     });
+    suggestions.addEventListener('mouseover', (e) => {
+        if (e.target instanceof HTMLLIElement) {
+            manageEasterEggTimer(e.target);
+        }
+    });
     window.onscroll = () => {
         toggleOpacityOnScroll(searchSection);
     };
@@ -155,25 +160,35 @@ function manageEasterEggTimer(element) {
 }
 // Once the Easter Egg is triggered, this function assigns a new color with each mouse over.
 // Given a long enough pause, the Easter Egg effect will be removed and reset.
-function createRainbows(ingredientElement) {
+function createRainbows(element) {
     clearTimeout(removeEasterEggTimer);
     const selectedColor = rainbowColors[rainbowIndex % rainbowColors.length];
-    ingredientElement.style.setProperty('--ingredient-link-hover-color', selectedColor);
-    ingredientElement.style.setProperty('--ingredient-link-hover-glow', "0.5rem");
+    element.style.setProperty('--link-hover-color', selectedColor);
+    element.style.setProperty('--link-hover-glow', "0.5rem");
     rainbowIndex++;
     removeEasterEggTimer = setTimeout(() => {
         easterEggTrigger = 0;
         resetIngredientColors();
+        resetSuggestionsColors();
     }, UISettings.easterEggResetDelay);
 }
+// TODO: Refactor this to be more DRY.
 // Resets ingredient link colors altered by easter egg to default values.
 function resetIngredientColors() {
     ingredientsMatrix.forEach((ingredientsList) => {
         ingredientsList.querySelectorAll('.ingredient-link').forEach((ingredient) => {
             const ingredientElement = ingredient;
-            ingredientElement.style.setProperty('--ingredient-link-hover-color', "white");
-            ingredientElement.style.setProperty('--ingredient-link-hover-glow', "0");
+            ingredientElement.style.setProperty('--link-hover-color', "white");
+            ingredientElement.style.setProperty('--link-hover-glow', "0");
         });
+    });
+}
+// TODO: Refactor this to be more DRY.
+function resetSuggestionsColors() {
+    suggestions.querySelectorAll('.suggestions-item').forEach((suggestion) => {
+        const suggestionElement = suggestion;
+        suggestionElement.style.setProperty('--link-hover-color', "white");
+        suggestionElement.style.setProperty('--link-hover-glow', "0");
     });
 }
 // Setup click event listeners for the drink buttons.
