@@ -151,18 +151,25 @@ button {
   overflow: hidden;
 }
 button:hover {
-  background: #181818;
-  color: #ff0051;
-  transition: all 0.1s ease-in-out;
-  transform: translateY(-5px);
+  background: white;
+  color: #181818;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 24px 41px 0 rgba(0,0,0,0.6);
+  z-index: 1;
 }
 #clearCocktails {
   background: #181818;
   color: #7b8796;
 }
 #clearCocktails:hover {
-    background: #181818;
-    color: #ff0051;
+  background: #181818;
+  color: #ff0051;
+  box-shadow: 0 24px 41px 0 rgba(0,0,0,0.45);
+  z-index: 1;
+}
+#clearCocktails.clicked {
+  box-shadow: 0 12px 20px 0 rgba(0,0,0,0.50);
+  transition: all 0.1s linear;
 }
 .suggestions {
   user-select: none;

@@ -12,6 +12,8 @@ export abstract class UISettings {
     public static longLoadMessageDelay = 4000
     public static reallyLongLoadDelay = 12000
 
+    public static clickAnimationDuration = 80
+
     public static easterEggDelay = 1000
     public static easterEggResetDelay = 750
     public static easterEggThreshold = 8

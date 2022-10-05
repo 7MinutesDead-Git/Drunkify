@@ -86,6 +86,7 @@ function setupListeners(): void {
         clearInput()
         updateBrowserHistoryAndURL('')
         errors.clearErrors()
+        animateClick(clearButton)
     })
 
     searchButton.addEventListener('click', () => {
@@ -445,6 +446,13 @@ function drinkExists(drink: DrinkData): boolean {
 function clearScreen() {
     cocktailList.innerHTML = ''
     drinksOnDisplay = {}
+}
+
+function animateClick(element: HTMLElement) {
+    element.classList.add('clicked')
+    setTimeout(() => {
+        element.classList.remove('clicked')
+    }, UISettings.clickAnimationDuration)
 }
 
 

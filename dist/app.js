@@ -78,6 +78,7 @@ function setupListeners() {
         clearInput();
         updateBrowserHistoryAndURL('');
         errors.clearErrors();
+        animateClick(clearButton);
     });
     searchButton.addEventListener('click', () => {
         suggestions.classList.add('hidden');
@@ -404,6 +405,12 @@ function drinkExists(drink) {
 function clearScreen() {
     cocktailList.innerHTML = '';
     drinksOnDisplay = {};
+}
+function animateClick(element) {
+    element.classList.add('clicked');
+    setTimeout(() => {
+        element.classList.remove('clicked');
+    }, UISettings.clickAnimationDuration);
 }
 // Add search term to local history.
 function addSearchToLocalHistory(search) {

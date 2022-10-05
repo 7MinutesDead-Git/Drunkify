@@ -12,6 +12,7 @@ UISettings.backgroundFlashDuration = 300;
 UISettings.typingFetchDelay = 100;
 UISettings.longLoadMessageDelay = 4000;
 UISettings.reallyLongLoadDelay = 12000;
+UISettings.clickAnimationDuration = 80;
 UISettings.easterEggDelay = 1000;
 UISettings.easterEggResetDelay = 750;
 UISettings.easterEggThreshold = 8;
