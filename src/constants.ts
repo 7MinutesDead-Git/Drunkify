@@ -17,4 +17,29 @@ export abstract class UISettings {
     public static easterEggDelay = 1000
     public static easterEggResetDelay = 750
     public static easterEggThreshold = 8
+    public static rainbowColors = [
+        "#f07878",
+        "#f07892",
+        "#f078b0",
+        "#f078d6",
+        "#de78f0",
+        "#a678f0",
+        "#a478f0",
+        "#9278f0",
+        "#8078f0",
+        "#789cf0",
+        "#78c4f0",
+        "#78eaf0",
+        "#78f0d6",
+        "#78f0b2",
+        "#78f08e",
+        "#88f078",
+        "#aaf078",
+        "#d2f078",
+        "#f0ec78",
+        "#f0d078",
+        "#f0b678",
+        "#f09678",
+        "#f08678"
+    ]
 }

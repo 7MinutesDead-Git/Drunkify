@@ -29,31 +29,6 @@ let ingredientsMatrix;
 let easterEggTimer = setTimeout(() => { }, 0);
 let removeEasterEggTimer = setTimeout(() => { }, 0);
 let easterEggTrigger = 0;
-const rainbowColors = [
-    "#f07878",
-    "#f07892",
-    "#f078b0",
-    "#f078d6",
-    "#de78f0",
-    "#a678f0",
-    "#a478f0",
-    "#9278f0",
-    "#8078f0",
-    "#789cf0",
-    "#78c4f0",
-    "#78eaf0",
-    "#78f0d6",
-    "#78f0b2",
-    "#78f08e",
-    "#88f078",
-    "#aaf078",
-    "#d2f078",
-    "#f0ec78",
-    "#f0d078",
-    "#f0b678",
-    "#f09678",
-    "#f08678"
-];
 let rainbowIndex = 0;
 const deadDatabaseMessage = "There was no response. We're sending a message to the guy trapped in the server room. Maybe try again later?";
 const deadClientMessage = "This thing says you're offline. Are you still connected to the internet?";
@@ -162,7 +137,8 @@ function manageEasterEggTimer(element) {
 // Given a long enough pause, the Easter Egg effect will be removed and reset.
 function createRainbows(element) {
     clearTimeout(removeEasterEggTimer);
-    const selectedColor = rainbowColors[rainbowIndex % rainbowColors.length];
+    const colorIndex = rainbowIndex % UISettings.rainbowColors.length;
+    const selectedColor = UISettings.rainbowColors[colorIndex];
     element.style.setProperty('--link-hover-color', selectedColor);
     element.style.setProperty('--link-hover-glow', "0.5rem");
     rainbowIndex++;
@@ -175,13 +151,15 @@ function createRainbows(element) {
 // TODO: Refactor this to be more DRY.
 // Resets ingredient link colors altered by easter egg to default values.
 function resetIngredientColors() {
-    ingredientsMatrix.forEach((ingredientsList) => {
-        ingredientsList.querySelectorAll('.ingredient-link').forEach((ingredient) => {
-            const ingredientElement = ingredient;
-            ingredientElement.style.setProperty('--link-hover-color', "white");
-            ingredientElement.style.setProperty('--link-hover-glow', "0");
-        });
-    });
+    if (ingredientsMatrix) {
+        for (const ingredientList of ingredientsMatrix) {
+            ingredientList.querySelectorAll('.ingredient-link').forEach((ingredient) => {
+                const ingredientElement = ingredient;
+                ingredientElement.style.setProperty('--link-hover-color', "white");
+                ingredientElement.style.setProperty('--link-hover-glow', "0");
+            });
+        }
+    }
 }
 // TODO: Refactor this to be more DRY.
 function resetSuggestionsColors() {
