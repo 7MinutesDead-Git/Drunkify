@@ -80,7 +80,7 @@ function setupListeners(): void {
         // Searching as we type is actually GREAT.
         typingSearchTimer = setTimeout(() => {
             getDrinks()
-        }, UISettings.typingFetchDelay)
+        }, UISettings.debounceTimer)
     })
 
     searchInput.addEventListener('focus', () => {
@@ -197,6 +197,10 @@ function setupDrinkListeners(): void {
             const targetElement = <HTMLElement>e.target
             // Search by ingredient just by clicking on the ingredient link.
             if (targetElement.tagName === 'A') {
+                // We're adding href links to ingredients for web crawlers, but since we're handling new searches
+                // and results all client-side as SPA, we want to prevent the page from reloading, so
+                // we won't actually navigate to the link.
+                e.preventDefault()
                 searchInput.value = targetElement.innerText
                 getDrinks(searchInput.value)
             }

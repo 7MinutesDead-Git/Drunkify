@@ -8,7 +8,7 @@ export abstract class UISettings {
     public static backgroundFlashDuration = 300
     // Prevents some bugs when typing too quickly, like event listeners
     // not being prepared for the latest results.
-    public static typingFetchDelay = 100
+    public static debounceTimer = 250
     public static longLoadMessageDelay = 4000
     public static reallyLongLoadDelay = 12000
 

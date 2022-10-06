@@ -24,7 +24,11 @@ function getIngredients(drink: DrinkData): HTMLUListElement {
         if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix]!.length > 0) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
-            ingredient.innerHTML = `<a class="ingredient-link">${measurementPairs[suffix]}</a>: ${measurement}`
+            // We're adding href links to ingredients for web crawlers, but since we're handling new searches
+            // and results all client-side as SPA, we want to prevent the page from reloading, so
+            // we won't actually navigate to the link (e.preventDefault()).
+            const crawlerLink = `?drink=${measurementPairs[suffix]}`
+            ingredient.innerHTML = `<a class="ingredient-link" href=${crawlerLink}>${measurementPairs[suffix]}</a>: ${measurement}`
             ingredient.classList.add('ingredient')
             ingredients.appendChild(ingredient)
         }
@@ -107,6 +111,7 @@ export default class Drink {
         }
         // TODO: Display a placeholder image if no image is found.
         this.imageElement.src = this.data['strDrinkThumb'] ?? ''
+        this.imageElement.alt = this.data['strDrink'] ?? 'Picture of a drink'
     }
     setDrinkName() {
         this.nameHeader.innerHTML = "Loading..."

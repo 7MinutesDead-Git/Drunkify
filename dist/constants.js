@@ -9,7 +9,7 @@ UISettings.autoScrollDelay = 75;
 UISettings.backgroundFlashDuration = 300;
 // Prevents some bugs when typing too quickly, like event listeners
 // not being prepared for the latest results.
-UISettings.typingFetchDelay = 100;
+UISettings.debounceTimer = 250;
 UISettings.longLoadMessageDelay = 4000;
 UISettings.reallyLongLoadDelay = 12000;
 UISettings.clickAnimationDuration = 80;
