@@ -21,7 +21,7 @@ function getIngredients(drink: DrinkData): HTMLUListElement {
         if (key.includes('Ingredient') && drinkPropertyIsValid(drink, key)) {
             measurementPairs[suffix] = drink[key]
         }
-        if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix]!.length > 0) {
+        if (key.includes('Measure') && drinkPropertyIsValid(drink, key) && measurementPairs[suffix]) {
             const measurement = drink[key]
             const ingredient = document.createElement('li')
             // We're adding href links to ingredients for web crawlers, but since we're handling new searches
